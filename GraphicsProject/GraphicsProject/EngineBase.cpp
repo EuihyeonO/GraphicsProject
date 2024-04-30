@@ -258,7 +258,7 @@ BOOL EngineBase::CreateRasterizerState()
     RD.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
     RD.FrontCounterClockwise = false;
 
-    HRESULT Result = Device->CreateRasterizerState(&RD, &RasterizerSate);
+    HRESULT Result = Device->CreateRasterizerState(&RD, &RasterizerState);
     if (Result != S_OK)
     {
         return FALSE;
