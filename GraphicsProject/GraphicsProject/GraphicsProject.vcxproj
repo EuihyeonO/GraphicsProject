@@ -160,6 +160,7 @@
     <ClInclude Include="..\DirectXTK\VertexTypes.h" />
     <ClInclude Include="..\DirectXTK\WICTextureLoader.h" />
     <ClInclude Include="..\DirectXTK\XboxDDSTextureLoader.h" />
+    <ClInclude Include="BaseHeader.h" />
     <ClInclude Include="EngineBase.h">
       <SubType>
       </SubType>
