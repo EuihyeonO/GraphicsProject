@@ -15,6 +15,15 @@
     <Filter Include="Public\DirectXTK">
       <UniqueIdentifier>{37cb9e01-f9a9-4efd-bbdc-786b5692f2ac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Private\Main">
+      <UniqueIdentifier>{a3b538f5-dc90-46f1-abdf-9edc525223bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Engine">
+      <UniqueIdentifier>{b04a204d-b989-4aba-8f24-0e20585f11a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Engine">
+      <UniqueIdentifier>{301d7e26-258b-4379-9737-75abb77aa313}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -92,15 +101,21 @@
     <ClInclude Include="..\DirectXTK\CommonStates.h">
       <Filter>Public\DirectXTK</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Main.cpp">
-      <Filter>Private</Filter>
-    </ClCompile>
+    <ClInclude Include="EngineBase.h">
+      <Filter>Public\Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\DirectXTK\SimpleMath.inl">
       <Filter>Public\DirectXTK</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp">
+      <Filter>Private\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineBase.cpp">
+      <Filter>Private\Engine</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
