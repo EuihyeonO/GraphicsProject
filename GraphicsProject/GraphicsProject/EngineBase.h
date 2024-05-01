@@ -36,6 +36,8 @@ public:
 	void Loop();
 	WPARAM End();
 
+	void CreateAllShader();
+
 	//Windows API
 public:
 	BOOL WindowInit(HINSTANCE _hInstance);
@@ -59,8 +61,9 @@ public:
 		return Device;
 	}
 
-	BOOL CreateVertexShader(const std::wstring& _ShaderFileName,std::vector<D3D11_INPUT_ELEMENT_DESC> _InputElement);
+	BOOL CreateVertexShader(const std::wstring& _ShaderFileName, std::vector<D3D11_INPUT_ELEMENT_DESC> _InputElement);
 	BOOL CreateInputLayOut(std::vector<D3D11_INPUT_ELEMENT_DESC> _InputElement, Microsoft::WRL::ComPtr<ID3D11InputLayout> _InputLayOut, Microsoft::WRL::ComPtr<ID3DBlob> _ShaderBlob);
+	
 	BOOL CreatePixelShader(const std::wstring& _ShaderFileName);
 
 public:
@@ -79,8 +82,8 @@ protected:
 private:
 	std::list<std::shared_ptr<class RenderBase>> Renderers;
 
-	std::unordered_map<const std::wstring, VertexShaderData> VertexShaders;
-	std::unordered_map<const std::wstring, Microsoft::WRL::ComPtr<ID3D11PixelShader>> PixelShaders;
+	std::unordered_map<std::wstring, VertexShaderData> VertexShaders;
+	std::unordered_map<std::wstring, Microsoft::WRL::ComPtr<ID3D11PixelShader>> PixelShaders;
 
 private:
 	int WindowWidth = 0;

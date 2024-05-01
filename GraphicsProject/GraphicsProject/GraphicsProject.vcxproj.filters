@@ -42,6 +42,15 @@
     <Filter Include="Public\Engine\Render">
       <UniqueIdentifier>{c154dd79-867d-47df-890c-069abf37bb62}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{54858211-7cfa-4db7-ba02-8748dcb86954}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\VertexShader">
+      <UniqueIdentifier>{f6c51662-017b-4ab8-b204-675741ae43c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\PixelShader">
+      <UniqueIdentifier>{de808d6d-96a8-4b68-8cd8-b21c64ce276b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -150,5 +159,13 @@
     <ClCompile Include="BoxRenderer.cpp">
       <Filter>Private\Renderer</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="VertexTest.hlsl">
+      <Filter>Shader\VertexShader</Filter>
+    </FxCompile>
+    <FxCompile Include="PixelTest.hlsl">
+      <Filter>Shader\PixelShader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

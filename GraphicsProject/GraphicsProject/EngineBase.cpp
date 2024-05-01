@@ -89,6 +89,20 @@ WPARAM EngineBase::End()
     return msg.wParam;
 }
 
+void EngineBase::CreateAllShader()
+{
+    {
+        std::vector<D3D11_INPUT_ELEMENT_DESC> inputElements = {
+            {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 4 * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 4 * 3 * 2, D3D11_INPUT_PER_VERTEX_DATA, 0},
+        };
+
+        //CreateVertexShader(L"VertexTest.hlsl", inputElements);
+    };
+
+}
+
 BOOL EngineBase::WindowInit(HINSTANCE _hInstance)
 {
     hInstance = _hInstance;
@@ -271,14 +285,13 @@ BOOL EngineBase::CreateVertexShader(const std::wstring& _ShaderFileName, std::ve
 {
     if (VertexShaders.find(_ShaderFileName) != VertexShaders.end())
     {
-        std::cout << "Don't try to Create existed VertexShader" << std::endl;
         return TRUE;
     }
 
     Microsoft::WRL::ComPtr<ID3DBlob> ShaderBlob;
     Microsoft::WRL::ComPtr<ID3DBlob> ErrorBlob;
 
-    HRESULT Result =
+    HRESULT Result = 
         D3DCompileFromFile(_ShaderFileName.c_str(), 0, 0, "main", "vs_5_0", 0, 0, &ShaderBlob, &ErrorBlob);
 
     if (Result != S_OK) 
@@ -323,7 +336,7 @@ BOOL EngineBase::CreateVertexShader(const std::wstring& _ShaderFileName, std::ve
 
 BOOL EngineBase::CreateInputLayOut(std::vector<D3D11_INPUT_ELEMENT_DESC> _InputElement, Microsoft::WRL::ComPtr<ID3D11InputLayout> _InputLayOut, Microsoft::WRL::ComPtr<ID3DBlob> _ShaderBlob)
 {
-    HRESULT Result = 
+    HRESULT Result =
     EngineBase::GetInstance().GetDevice()->CreateInputLayout(_InputElement.data(), UINT(_InputElement.size()),
         _ShaderBlob->GetBufferPointer(), _ShaderBlob->GetBufferSize(),
         &_InputLayOut);
@@ -339,10 +352,14 @@ BOOL EngineBase::CreateInputLayOut(std::vector<D3D11_INPUT_ELEMENT_DESC> _InputE
 
 BOOL EngineBase::CreatePixelShader(const std::wstring& _ShaderFileName)
 {
+    if (PixelShaders.find(_ShaderFileName) != PixelShaders.end())
+    {
+        return TRUE;
+    }
+
     Microsoft::WRL::ComPtr<ID3DBlob> ShaderBlob;
     Microsoft::WRL::ComPtr<ID3DBlob> ErrorBlob;
 
-    // 주의: 쉐이더의 시작점의 이름이 "main"인 함수로 지정
     HRESULT Result =
         D3DCompileFromFile(_ShaderFileName.c_str(), 0, 0, "main", "ps_5_0", 0, 0, &ShaderBlob, &ErrorBlob);
     
@@ -375,7 +392,7 @@ BOOL EngineBase::CreatePixelShader(const std::wstring& _ShaderFileName)
         return FALSE;
     }
 
-    PixelShaders.insert({ _ShaderFileName, NewPixelShader });
+    PixelShaders.insert({ _ShaderFileName, NewPixelShader});
 
     return TRUE;
 }
@@ -451,6 +468,8 @@ BOOL EngineBase::Init(HINSTANCE _hInstance, int _Width, int _Height)
     {
         return FALSE;
     }
+
+    CreateAllShader();
 
     return TRUE;
 }
