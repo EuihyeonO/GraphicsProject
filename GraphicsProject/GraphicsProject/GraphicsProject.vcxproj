@@ -161,21 +161,37 @@
     <ClInclude Include="..\DirectXTK\WICTextureLoader.h" />
     <ClInclude Include="..\DirectXTK\XboxDDSTextureLoader.h" />
     <ClInclude Include="BaseHeader.h" />
+    <ClInclude Include="BoxRenderer.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="EngineBase.h">
       <SubType>
       </SubType>
     </ClInclude>
     <ClInclude Include="framework.h" />
     <ClInclude Include="GraphicsProject.h" />
+    <ClInclude Include="RenderBase.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BoxRenderer.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="EngineBase.cpp">
       <SubType>
       </SubType>
     </ClCompile>
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="RenderBase.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\DirectXTK\SimpleMath.inl" />

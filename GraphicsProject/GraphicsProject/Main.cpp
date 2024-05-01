@@ -9,16 +9,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 {
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-    EngineBase NewEngineBase;
+    EngineBase* EngineBasePtr = EngineBase::GetInstance();
 
-    if (!NewEngineBase.Init(hInstance, 1600, 900))
+    if (!EngineBasePtr->Init(hInstance, 1600, 900))
     {
         return -1;
     }
 
-    NewEngineBase.Loop();
+    EngineBasePtr->Loop();
 
-    WPARAM EndParam = NewEngineBase.End();
+    WPARAM EndParam = EngineBasePtr->End();
 
     return (int)EndParam;
 }

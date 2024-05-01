@@ -1,10 +1,8 @@
 #include "EngineBase.h"
 
-EngineBase::EngineBase()
-{
-}
+EngineBase* EngineBase::Instance = nullptr;
 
-EngineBase::~EngineBase()
+EngineBase::EngineBase()
 {
 }
 

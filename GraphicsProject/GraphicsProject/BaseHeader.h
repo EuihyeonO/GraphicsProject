@@ -3,6 +3,11 @@
 #include "Windows.h"
 
 #include <iostream>
+#include <SimpleMath.h>
+#include <memory>
+#include <vector>
+#include <list>
+
 #include <d3d11.h>
 #include <wrl.h>
 

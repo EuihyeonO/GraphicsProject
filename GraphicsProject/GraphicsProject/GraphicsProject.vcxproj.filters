@@ -24,6 +24,24 @@
     <Filter Include="Public\Engine">
       <UniqueIdentifier>{301d7e26-258b-4379-9737-75abb77aa313}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Private\Renderer">
+      <UniqueIdentifier>{177e82d0-1fff-421e-b805-b083f8b28bbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Renderer">
+      <UniqueIdentifier>{cf345a13-48d2-438b-955c-312f0460ccf6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Engine\Base">
+      <UniqueIdentifier>{a1d97a3d-88a1-4d93-b48e-4049781bc837}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Engine\Base">
+      <UniqueIdentifier>{f73e1486-91ff-4e3e-93cb-554aeccdb0d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Engine\Render">
+      <UniqueIdentifier>{c0c83eb6-7f0e-476b-b293-e59c2c2fb05b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Engine\Render">
+      <UniqueIdentifier>{c154dd79-867d-47df-890c-069abf37bb62}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -101,11 +119,17 @@
     <ClInclude Include="..\DirectXTK\CommonStates.h">
       <Filter>Public\DirectXTK</Filter>
     </ClInclude>
-    <ClInclude Include="EngineBase.h">
-      <Filter>Public\Engine</Filter>
+    <ClInclude Include="RenderBase.h">
+      <Filter>Public\Engine\Render</Filter>
     </ClInclude>
     <ClInclude Include="BaseHeader.h">
-      <Filter>Public\Engine</Filter>
+      <Filter>Public\Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineBase.h">
+      <Filter>Public\Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxRenderer.h">
+      <Filter>Public\Renderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -117,8 +141,14 @@
     <ClCompile Include="Main.cpp">
       <Filter>Private\Main</Filter>
     </ClCompile>
+    <ClCompile Include="RenderBase.cpp">
+      <Filter>Private\Engine\Render</Filter>
+    </ClCompile>
     <ClCompile Include="EngineBase.cpp">
-      <Filter>Private\Engine</Filter>
+      <Filter>Private\Engine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxRenderer.cpp">
+      <Filter>Private\Renderer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

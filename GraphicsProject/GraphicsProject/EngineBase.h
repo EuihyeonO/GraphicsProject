@@ -1,17 +1,40 @@
 #pragma once
 #include "BaseHeader.h"
 
+class RenderBase;
+
 class EngineBase
 {
 public:
-
-	EngineBase();
-	~EngineBase();
-
 	EngineBase(const EngineBase& _Other) = delete;
 	EngineBase(EngineBase&& _Other) noexcept = delete;
 	EngineBase& operator=(const EngineBase& _Other) = delete;
 	EngineBase& operator=(EngineBase&& _Other) noexcept = delete;
+
+private:
+	EngineBase();
+
+	~EngineBase()
+	{
+		if (Instance != nullptr)
+		{
+			delete (Instance);
+		}
+	}
+
+	static EngineBase* Instance;
+
+	//static
+public:
+	static EngineBase* GetInstance()
+	{
+		if (Instance == nullptr)
+		{
+			Instance = new EngineBase();
+		}
+
+		return Instance;
+	}
 
 	//Process
 public:
@@ -37,7 +60,26 @@ public:
 
 	void SetViewport();
 
+	Microsoft::WRL::ComPtr<ID3D11Device> GetDevice()
+	{
+		return Device;
+	}
+
+public:
+	template <typename T>
+	static std::shared_ptr<T> CreateRenderer()
+	{
+		std::shared_ptr<class RenderBase> NewRenderer = std::make_shared<T>();
+		NewRenderer->Init();
+		Renderers.insert(NewRenderer);
+
+		return std::dynamic_pointer_cast<T>(NewRenderer);
+	}
+
 protected:
+
+private:
+	std::list<std::shared_ptr<class RenderBase>> Renderers;
 
 private:
 	int WindowWidth = 0;
