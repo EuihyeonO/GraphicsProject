@@ -1,5 +1,8 @@
 #include "EngineBase.h"
 
+#pragma comment (lib, "d3d11.lib")
+#pragma comment (lib, "d3dcompiler.lib")
+
 EngineBase::EngineBase()
 {
 }
@@ -98,9 +101,24 @@ void EngineBase::CreateAllShader()
             {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 4 * 3 * 2, D3D11_INPUT_PER_VERTEX_DATA, 0},
         };
 
-        //CreateVertexShader(L"VertexTest.hlsl", inputElements);
-    };
+        BOOL Result = CreateVertexShader(L"VertexTest.hlsl", inputElements);
 
+        if (Result == FALSE)
+        {
+            std::cout << "VertexTest Create Failed" << std::endl;
+            return;
+        }
+    }
+
+    {
+        BOOL Result = CreatePixelShader(L"PixelTest.hlsl");
+
+        if (Result == FALSE)
+        {
+            std::cout << "PixelTest Create Failed" << std::endl;
+            return;
+        }
+    }
 }
 
 BOOL EngineBase::WindowInit(HINSTANCE _hInstance)
@@ -291,8 +309,7 @@ BOOL EngineBase::CreateVertexShader(const std::wstring& _ShaderFileName, std::ve
     Microsoft::WRL::ComPtr<ID3DBlob> ShaderBlob;
     Microsoft::WRL::ComPtr<ID3DBlob> ErrorBlob;
 
-    HRESULT Result = 
-        D3DCompileFromFile(_ShaderFileName.c_str(), 0, 0, "main", "vs_5_0", 0, 0, &ShaderBlob, &ErrorBlob);
+    HRESULT Result = D3DCompileFromFile(_ShaderFileName.c_str(), 0, 0, "main", "vs_5_0", 0, 0, &ShaderBlob, &ErrorBlob);
 
     if (Result != S_OK) 
     {
@@ -360,8 +377,7 @@ BOOL EngineBase::CreatePixelShader(const std::wstring& _ShaderFileName)
     Microsoft::WRL::ComPtr<ID3DBlob> ShaderBlob;
     Microsoft::WRL::ComPtr<ID3DBlob> ErrorBlob;
 
-    HRESULT Result =
-        D3DCompileFromFile(_ShaderFileName.c_str(), 0, 0, "main", "ps_5_0", 0, 0, &ShaderBlob, &ErrorBlob);
+    HRESULT Result = D3DCompileFromFile(_ShaderFileName.c_str(), 0, 0, "main", "ps_5_0", 0, 0, &ShaderBlob, &ErrorBlob);
     
     if (Result != S_OK)
     {

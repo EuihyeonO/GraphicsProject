@@ -2,7 +2,6 @@
 #include "GraphicsProject.h"
 #include "EngineBase.h"
 
-#pragma comment (lib, "d3d11.lib")
 #pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
