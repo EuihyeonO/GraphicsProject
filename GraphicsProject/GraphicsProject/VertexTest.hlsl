@@ -1,8 +1,8 @@
-cbuffer ModelViewProjectionConstantBuffer : register(b0)
+cbuffer WorldViewProjection : register(b0)
 {
-    matrix model;
-    matrix view;
-    matrix projection;
+    matrix World;
+    matrix View;
+    matrix Projection;
 };
 
 // Semantics
@@ -21,17 +21,17 @@ struct PixelShaderInput
     float3 color : COLOR;
 };
 
-PixelShaderInput main(VertexShaderInput input)
+PixelShaderInput main(VertexShaderInput _Input)
 {
+    PixelShaderInput Output;
+    float4 Pos = float4(_Input.pos, 1.0f);
+    
+    Pos = mul(Pos, World);
+    Pos = mul(Pos, View);
+    Pos = mul(Pos, Projection);
 
-    PixelShaderInput output;
-    float4 pos = float4(input.pos, 1.0f);
-    pos = mul(pos, model);
-    pos = mul(pos, view);
-    pos = mul(pos, projection);
-
-    output.pos = pos;
-    output.color = input.color;
-
-    return output;
+    Output.pos = Pos;
+    Output.color = _Input.color;
+    
+    return Output;
 }

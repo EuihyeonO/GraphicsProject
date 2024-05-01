@@ -4,7 +4,7 @@ struct PixelShaderInput
     float3 color : COLOR;
 };
 
-float4 main(PixelShaderInput input) : SV_TARGET
+float4 main(PixelShaderInput _Input) : SV_TARGET
 {
-    return float4(input.color, 1.0);
+    return float4(_Input.color, 1.0);
 }
