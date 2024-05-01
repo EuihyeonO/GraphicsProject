@@ -16,7 +16,7 @@ public:
 
 public:
 	virtual void Render() override{}
-	virtual void Init() override{}
+	virtual void Init() override;
 
 protected:
 

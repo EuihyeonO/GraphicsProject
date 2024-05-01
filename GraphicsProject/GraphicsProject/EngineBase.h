@@ -13,26 +13,13 @@ public:
 
 private:
 	EngineBase();
-
-	~EngineBase()
-	{
-		if (Instance != nullptr)
-		{
-			delete (Instance);
-		}
-	}
-
-	static EngineBase* Instance;
+	~EngineBase();
 
 	//static
 public:
-	static EngineBase* GetInstance()
+	static EngineBase& GetInstance()
 	{
-		if (Instance == nullptr)
-		{
-			Instance = new EngineBase();
-		}
-
+		static EngineBase Instance;
 		return Instance;
 	}
 

@@ -9,6 +9,15 @@ BoxRenderer::~BoxRenderer()
 {
 }
 
+void BoxRenderer::Init()
+{
+    CreateVertexAndIndex();
+    
+    RenderBase::CreateVertexBuffer();
+    RenderBase::CreateIndexBuffer();
+    RenderBase::CreateConstantBuffer<Transform>(TransFormData);
+}
+
 void BoxRenderer::CreateVertexAndIndex()
 {
     std::vector<DirectX::SimpleMath::Vector3> Positions;

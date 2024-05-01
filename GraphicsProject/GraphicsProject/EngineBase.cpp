@@ -1,8 +1,10 @@
 #include "EngineBase.h"
 
-EngineBase* EngineBase::Instance = nullptr;
-
 EngineBase::EngineBase()
+{
+}
+
+EngineBase::~EngineBase()
 {
 }
 
@@ -109,25 +111,25 @@ BOOL EngineBase::DirectXInit()
         std::cout << "CreateDevice() is Failed!" << std::endl;
         return FALSE;
     }
-
+    
     if (!CreateSwapChain())
     {
         std::cout << "CreateSwapChain() is Failed!" << std::endl;
         return FALSE;
     }
-
+    
     if (!CreateRasterizerState())
     {
         std::cout << "CreateRasterizerState() is Failed!" << std::endl;
         return FALSE;
     }
-
+    
     if (!CreateDepthStencil())
     {
         std::cout << "CreateDepthStencil() is Failed!" << std::endl;
         return FALSE;
     }
-
+    
     SetViewport();
 
     return TRUE;
