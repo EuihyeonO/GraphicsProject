@@ -267,6 +267,119 @@ BOOL EngineBase::CreateRasterizerState()
     return TRUE;
 }
 
+BOOL EngineBase::CreateVertexShader(const std::wstring& _ShaderFileName, std::vector<D3D11_INPUT_ELEMENT_DESC> _InputElement)
+{
+    if (VertexShaders.find(_ShaderFileName) != VertexShaders.end())
+    {
+        std::cout << "Don't try to Create existed VertexShader" << std::endl;
+        return TRUE;
+    }
+
+    Microsoft::WRL::ComPtr<ID3DBlob> ShaderBlob;
+    Microsoft::WRL::ComPtr<ID3DBlob> ErrorBlob;
+
+    HRESULT Result =
+        D3DCompileFromFile(_ShaderFileName.c_str(), 0, 0, "main", "vs_5_0", 0, 0, &ShaderBlob, &ErrorBlob);
+
+    if (Result != S_OK) 
+    {
+        // 파일이 없을 경우
+        if ((Result & D3D11_ERROR_FILE_NOT_FOUND) != 0) 
+        {
+            std::cout << "File not found." << std::endl;
+        }
+
+        // 에러 메시지가 있으면 출력
+        if (ErrorBlob)
+        {
+            std::cout << "Shader compile error\n" << (char*)ErrorBlob->GetBufferPointer() << std::endl;
+        }
+
+        return FALSE;
+    }
+
+    Microsoft::WRL::ComPtr<ID3D11VertexShader> NewVertextShader;
+
+    Result = 
+        EngineBase::GetInstance().GetDevice()->CreateVertexShader(ShaderBlob->GetBufferPointer(), ShaderBlob->GetBufferSize(), NULL,
+        &NewVertextShader);
+
+    if (Result != S_OK)
+    {
+        std::cout << "CreateVertexShader() failed" << std::endl;
+        return FALSE;
+    }
+
+    Microsoft::WRL::ComPtr<ID3D11InputLayout> _InputLayOut;
+    if (!CreateInputLayOut(_InputElement, _InputLayOut, ShaderBlob))
+    {
+        return FALSE;
+    }
+
+    VertexShaders.insert({ _ShaderFileName, {NewVertextShader, _InputLayOut} });
+
+    return TRUE;
+}
+
+BOOL EngineBase::CreateInputLayOut(std::vector<D3D11_INPUT_ELEMENT_DESC> _InputElement, Microsoft::WRL::ComPtr<ID3D11InputLayout> _InputLayOut, Microsoft::WRL::ComPtr<ID3DBlob> _ShaderBlob)
+{
+    HRESULT Result = 
+    EngineBase::GetInstance().GetDevice()->CreateInputLayout(_InputElement.data(), UINT(_InputElement.size()),
+        _ShaderBlob->GetBufferPointer(), _ShaderBlob->GetBufferSize(),
+        &_InputLayOut);
+
+    if (Result != S_OK)
+    {
+        std::cout << "CreateInputLayOut() failed" << std::endl;
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+BOOL EngineBase::CreatePixelShader(const std::wstring& _ShaderFileName)
+{
+    Microsoft::WRL::ComPtr<ID3DBlob> ShaderBlob;
+    Microsoft::WRL::ComPtr<ID3DBlob> ErrorBlob;
+
+    // 주의: 쉐이더의 시작점의 이름이 "main"인 함수로 지정
+    HRESULT Result =
+        D3DCompileFromFile(_ShaderFileName.c_str(), 0, 0, "main", "ps_5_0", 0, 0, &ShaderBlob, &ErrorBlob);
+    
+    if (Result != S_OK)
+    {
+        // 파일이 없을 경우
+        if ((Result & D3D11_ERROR_FILE_NOT_FOUND) != 0)
+        {
+            std::cout << "File not found." << std::endl;
+        }
+
+        // 에러 메시지가 있으면 출력
+        if (ErrorBlob)
+        {
+            std::cout << "Shader compile error\n" << (char*)ErrorBlob->GetBufferPointer() << std::endl;
+        }
+
+        return FALSE;
+    }
+
+    Microsoft::WRL::ComPtr<ID3D11PixelShader> NewPixelShader;
+
+    Result = 
+    EngineBase::GetInstance().GetDevice()->CreatePixelShader(ShaderBlob->GetBufferPointer(), ShaderBlob->GetBufferSize(), NULL,
+        &NewPixelShader);
+
+    if (Result != S_OK)
+    {
+        std::cout << "CreatePixelShader() failed" << std::endl;
+        return FALSE;
+    }
+
+    PixelShaders.insert({ _ShaderFileName, NewPixelShader });
+
+    return TRUE;
+}
+
 BOOL EngineBase::CreateDepthStencil()
 {
     D3D11_TEXTURE2D_DESC DepthStencilBufferDesc;

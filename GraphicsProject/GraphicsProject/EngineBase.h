@@ -1,7 +1,14 @@
 #pragma once
 #include "BaseHeader.h"
+#include <unordered_map>
 
 class RenderBase;
+
+struct VertexShaderData
+{
+	Microsoft::WRL::ComPtr<ID3D11VertexShader> VertexShader;
+	Microsoft::WRL::ComPtr<ID3D11InputLayout> InputLayout;
+};
 
 class EngineBase
 {
@@ -52,6 +59,10 @@ public:
 		return Device;
 	}
 
+	BOOL CreateVertexShader(const std::wstring& _ShaderFileName,std::vector<D3D11_INPUT_ELEMENT_DESC> _InputElement);
+	BOOL CreateInputLayOut(std::vector<D3D11_INPUT_ELEMENT_DESC> _InputElement, Microsoft::WRL::ComPtr<ID3D11InputLayout> _InputLayOut, Microsoft::WRL::ComPtr<ID3DBlob> _ShaderBlob);
+	BOOL CreatePixelShader(const std::wstring& _ShaderFileName);
+
 public:
 	template <typename T>
 	static std::shared_ptr<T> CreateRenderer()
@@ -67,6 +78,9 @@ protected:
 
 private:
 	std::list<std::shared_ptr<class RenderBase>> Renderers;
+
+	std::unordered_map<const std::wstring, VertexShaderData> VertexShaders;
+	std::unordered_map<const std::wstring, Microsoft::WRL::ComPtr<ID3D11PixelShader>> PixelShaders;
 
 private:
 	int WindowWidth = 0;
