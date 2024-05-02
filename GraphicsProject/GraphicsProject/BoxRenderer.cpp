@@ -9,6 +9,26 @@ BoxRenderer::~BoxRenderer()
 {
 }
 
+void BoxRenderer::Render()
+{
+    UINT Stride = sizeof(Vertex);
+    UINT Offset = 0;
+    
+    VertexShaderData VSData = EngineBase::GetInstance().GetVertexShaderData(L"VertexTest.hlsl");
+    Microsoft::WRL::ComPtr<ID3D11PixelShader> PS = EngineBase::GetInstance().GetPixelShaderData(L"PixelTest.hlsl");
+    
+    EngineBase::GetInstance().GetContext()->IASetVertexBuffers(0, 1, VertexBuffer.GetAddressOf(), &Stride, &Offset);
+    EngineBase::GetInstance().GetContext()->IASetIndexBuffer(IndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+    EngineBase::GetInstance().GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    EngineBase::GetInstance().GetContext()->VSSetShader(VSData.VertexShader.Get(), 0, 0);
+    EngineBase::GetInstance().GetContext()->IASetInputLayout(VSData.InputLayout.Get());
+    EngineBase::GetInstance().GetContext()->VSSetConstantBuffers(0, 1, ConstantBuffer.GetAddressOf());
+    EngineBase::GetInstance().GetContext()->PSSetShader(PS.Get(), 0, 0);
+    
+    UINT IndexCount = Indices.size();
+    EngineBase::GetInstance().GetContext()->DrawIndexed(IndexCount, 0, 0);
+}
+
 void BoxRenderer::Init()
 {
     CreateVertexAndIndex();
@@ -16,6 +36,37 @@ void BoxRenderer::Init()
     RenderBase::CreateVertexBuffer();
     RenderBase::CreateIndexBuffer();
     RenderBase::CreateConstantBuffer<Transform>(TransFormData);
+}
+
+float Dt = 0.0f;
+
+void BoxRenderer::Update()
+{
+    Dt += 0.01f;
+
+    TransFormData.WorldMatrix = DirectX::SimpleMath::Matrix::CreateScale(0.5f) * DirectX::SimpleMath::Matrix::CreateRotationY(Dt) *
+        DirectX::SimpleMath::Matrix::CreateTranslation(DirectX::SimpleMath::Vector3(0.0f, -0.3f, 1.0f));
+    
+    TransFormData.WorldMatrix = TransFormData.WorldMatrix.Transpose();
+   
+    TransFormData.ViewMAtrix =
+        DirectX::XMMatrixLookAtLH({ 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f });
+   
+    TransFormData.ViewMAtrix = TransFormData.ViewMAtrix.Transpose();
+
+    const float AspectRatio = 1600.0f / 900.0f;
+
+    const float fovAngleY = 70.0f * DirectX::XM_PI / 180.0f;
+    TransFormData.ProjMatrix =
+        DirectX::XMMatrixPerspectiveFovLH(fovAngleY, AspectRatio, 0.01f, 100.0f);
+
+    TransFormData.ProjMatrix = TransFormData.ProjMatrix.Transpose();
+
+    D3D11_MAPPED_SUBRESOURCE Ms;
+
+    EngineBase::GetInstance().GetContext()->Map(ConstantBuffer.Get(), NULL, D3D11_MAP_WRITE_DISCARD, NULL, &Ms);
+    memcpy(Ms.pData, &TransFormData, sizeof(TransFormData));
+    EngineBase::GetInstance().GetContext()->Unmap(ConstantBuffer.Get(), NULL);
 }
 
 void BoxRenderer::CreateVertexAndIndex()

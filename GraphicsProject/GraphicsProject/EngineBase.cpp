@@ -1,4 +1,5 @@
 #include "EngineBase.h"
+#include "BoxRenderer.h"
 
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
@@ -84,6 +85,11 @@ void EngineBase::Loop()
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
+        else
+        {
+            Update();
+            Render();
+        }
     }
 }
 
@@ -98,7 +104,6 @@ void EngineBase::CreateAllShader()
         std::vector<D3D11_INPUT_ELEMENT_DESC> inputElements = {
             {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
             {"COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 4 * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
-            {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 4 * 3 * 2, D3D11_INPUT_PER_VERTEX_DATA, 0},
         };
 
         BOOL Result = CreateVertexShader(L"VertexTest.hlsl", inputElements);
@@ -119,6 +124,33 @@ void EngineBase::CreateAllShader()
             return;
         }
     }
+}
+
+void EngineBase::Update()
+{
+    for (std::shared_ptr<RenderBase> Renderer : Renderers)
+    {
+        Renderer->Update();
+    }
+}
+
+void EngineBase::Render()
+{
+    float clearColor[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
+    Context->ClearRenderTargetView(RenderTargetView.Get(), clearColor);
+    Context->ClearDepthStencilView(DepthStencilView.Get(),
+        D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+    Context->OMSetRenderTargets(1, RenderTargetView.GetAddressOf(), DepthStencilView.Get());
+    Context->OMSetDepthStencilState(DepthStencilState.Get(), 0);
+    Context->RSSetState(RasterizerState.Get());
+
+    for (std::shared_ptr<RenderBase> Renderer : Renderers)
+    {
+        Renderer->Render();
+    }
+
+    SwapChain->Present(1, 0);
 }
 
 BOOL EngineBase::WindowInit(HINSTANCE _hInstance)
@@ -351,7 +383,7 @@ BOOL EngineBase::CreateVertexShader(const std::wstring& _ShaderFileName, std::ve
     return TRUE;
 }
 
-BOOL EngineBase::CreateInputLayOut(std::vector<D3D11_INPUT_ELEMENT_DESC> _InputElement, Microsoft::WRL::ComPtr<ID3D11InputLayout> _InputLayOut, Microsoft::WRL::ComPtr<ID3DBlob> _ShaderBlob)
+BOOL EngineBase::CreateInputLayOut(std::vector<D3D11_INPUT_ELEMENT_DESC> _InputElement, Microsoft::WRL::ComPtr<ID3D11InputLayout>& _InputLayOut, Microsoft::WRL::ComPtr<ID3DBlob> _ShaderBlob)
 {
     HRESULT Result =
     EngineBase::GetInstance().GetDevice()->CreateInputLayout(_InputElement.data(), UINT(_InputElement.size()),
@@ -411,6 +443,11 @@ BOOL EngineBase::CreatePixelShader(const std::wstring& _ShaderFileName)
     PixelShaders.insert({ _ShaderFileName, NewPixelShader});
 
     return TRUE;
+}
+
+void EngineBase::AddRenderer(std::shared_ptr<class RenderBase> _NewRenderer)
+{
+    Renderers.push_back(_NewRenderer);
 }
 
 BOOL EngineBase::CreateDepthStencil()
@@ -486,6 +523,8 @@ BOOL EngineBase::Init(HINSTANCE _hInstance, int _Width, int _Height)
     }
 
     CreateAllShader();
+
+    RenderBase::CreateRenderer<BoxRenderer>();
 
     return TRUE;
 }

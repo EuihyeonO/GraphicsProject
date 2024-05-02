@@ -1,8 +1,6 @@
 #pragma once
-#include "BaseHeader.h"
-#include <unordered_map>
 
-class RenderBase;
+#include "BaseHeader.h"
 
 struct VertexShaderData
 {
@@ -38,6 +36,9 @@ public:
 
 	void CreateAllShader();
 
+	void Update();
+	void Render();
+
 	//Windows API
 public:
 	BOOL WindowInit(HINSTANCE _hInstance);
@@ -61,21 +62,28 @@ public:
 		return Device;
 	}
 
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> GetContext()
+	{
+		return Context;
+	}
+
 	BOOL CreateVertexShader(const std::wstring& _ShaderFileName, std::vector<D3D11_INPUT_ELEMENT_DESC> _InputElement);
-	BOOL CreateInputLayOut(std::vector<D3D11_INPUT_ELEMENT_DESC> _InputElement, Microsoft::WRL::ComPtr<ID3D11InputLayout> _InputLayOut, Microsoft::WRL::ComPtr<ID3DBlob> _ShaderBlob);
+	BOOL CreateInputLayOut(std::vector<D3D11_INPUT_ELEMENT_DESC> _InputElement, Microsoft::WRL::ComPtr<ID3D11InputLayout>& _InputLayOut, Microsoft::WRL::ComPtr<ID3DBlob> _ShaderBlob);
 	
+	VertexShaderData& GetVertexShaderData(const std::wstring& _ShaderName)
+	{
+		return VertexShaders[_ShaderName];
+	}
+
 	BOOL CreatePixelShader(const std::wstring& _ShaderFileName);
 
-public:
-	template <typename T>
-	static std::shared_ptr<T> CreateRenderer()
+	Microsoft::WRL::ComPtr<ID3D11PixelShader> GetPixelShaderData(const std::wstring& _ShaderName)
 	{
-		std::shared_ptr<class RenderBase> NewRenderer = std::make_shared<T>();
-		NewRenderer->Init();
-		Renderers.insert(NewRenderer);
-
-		return std::dynamic_pointer_cast<T>(NewRenderer);
+		return PixelShaders[_ShaderName];
 	}
+
+public:
+	void AddRenderer(std::shared_ptr<class RenderBase> _NewRenderer);
 
 protected:
 

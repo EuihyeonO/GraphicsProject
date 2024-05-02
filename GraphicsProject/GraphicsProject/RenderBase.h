@@ -1,20 +1,6 @@
 #pragma once
 #include "EngineBase.h"
 
-struct Vertex
-{
-	DirectX::SimpleMath::Vector3 Position;
-	DirectX::SimpleMath::Vector3 Color;
-	DirectX::SimpleMath::Vector3 Normal;
-};
-
-struct Transform 
-{
-	DirectX::SimpleMath::Matrix WorldMatrix = DirectX::SimpleMath::Matrix();
-	DirectX::SimpleMath::Matrix ViewMAtrix = DirectX::SimpleMath::Matrix();
-	DirectX::SimpleMath::Matrix ProjMatrix = DirectX::SimpleMath::Matrix();
-};
-
 class RenderBase
 {
 
@@ -30,6 +16,7 @@ public:
 public:
 	virtual void Init() = 0;
 	virtual void Render() = 0;
+	virtual void Update() = 0;
 	
 	void CreateVertexBuffer();
 	void CreateIndexBuffer();
@@ -59,8 +46,37 @@ public:
 		};
 	}
 
+	template <typename T>
+	static std::shared_ptr<T> CreateRenderer()
+	{
+		std::shared_ptr<class RenderBase> NewRenderer = std::make_shared<T>();
+		NewRenderer->Init();
+
+		EngineBase::GetInstance().AddRenderer(NewRenderer);
+
+		return std::dynamic_pointer_cast<T>(NewRenderer);
+	}
+
+
+	Microsoft::WRL::ComPtr<ID3D11Buffer> GetBertexBuffer()
+	{
+		return VertexBuffer;
+	}
+
+
+	Microsoft::WRL::ComPtr<ID3D11Buffer> GetIndexBuffer()
+	{
+		return IndexBuffer;
+	}
+
+
+	Microsoft::WRL::ComPtr<ID3D11Buffer> GetConstantBuffer()
+	{
+		return ConstantBuffer;
+	}
+
 protected:
-	std::vector<Vertex> Vertices;
+	std::vector<struct Vertex> Vertices;
 	std::vector<uint16_t> Indices;
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> VertexBuffer;
