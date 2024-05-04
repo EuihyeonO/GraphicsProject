@@ -341,7 +341,12 @@ BOOL EngineBase::CreateVertexShader(const std::wstring& _ShaderFileName, std::ve
     Microsoft::WRL::ComPtr<ID3DBlob> ShaderBlob;
     Microsoft::WRL::ComPtr<ID3DBlob> ErrorBlob;
 
-    HRESULT Result = D3DCompileFromFile(_ShaderFileName.c_str(), 0, 0, "main", "vs_5_0", 0, 0, &ShaderBlob, &ErrorBlob);
+    UINT CompileFlag = 0;
+#if defined(DEBUG) || defined(_DEBUG)
+    CompileFlag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif
+
+    HRESULT Result = D3DCompileFromFile(_ShaderFileName.c_str(), 0, 0, "main", "vs_5_0", CompileFlag, 0, &ShaderBlob, &ErrorBlob);
 
     if (Result != S_OK) 
     {
@@ -409,7 +414,12 @@ BOOL EngineBase::CreatePixelShader(const std::wstring& _ShaderFileName)
     Microsoft::WRL::ComPtr<ID3DBlob> ShaderBlob;
     Microsoft::WRL::ComPtr<ID3DBlob> ErrorBlob;
 
-    HRESULT Result = D3DCompileFromFile(_ShaderFileName.c_str(), 0, 0, "main", "ps_5_0", 0, 0, &ShaderBlob, &ErrorBlob);
+    UINT CompileFlag = 0;
+#if defined(DEBUG) || defined(_DEBUG)
+    CompileFlag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif
+
+    HRESULT Result = D3DCompileFromFile(_ShaderFileName.c_str(), 0, 0, "main", "ps_5_0", CompileFlag, 0, &ShaderBlob, &ErrorBlob);
     
     if (Result != S_OK)
     {
