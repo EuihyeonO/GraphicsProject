@@ -12,12 +12,15 @@ struct VertexShaderInput
 {
     float3 pos : POSITION;
     float3 color : COLOR;
+    float3 Normal : NORMAL;
+    float2 TexCoord : TEXCOORD;
 };
 
 struct PixelShaderInput
 {
     float4 pos : SV_POSITION;
     float3 color : COLOR;
+    float2 TexCoord : TEXCOORD;
 };
 
 PixelShaderInput main(VertexShaderInput _Input)
@@ -31,6 +34,7 @@ PixelShaderInput main(VertexShaderInput _Input)
 
     Output.pos = Pos;
     Output.color = _Input.color;
+    Output.TexCoord = _Input.TexCoord;
     
     return Output;
 }
