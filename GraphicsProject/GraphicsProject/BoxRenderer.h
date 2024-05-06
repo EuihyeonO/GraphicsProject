@@ -22,5 +22,6 @@ protected:
 
 private:
 	void CreateVertexAndIndex();
+	DirectX::SimpleMath::Vector4 UV;
 };
 

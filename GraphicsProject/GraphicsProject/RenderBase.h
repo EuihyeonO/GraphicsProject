@@ -1,6 +1,14 @@
 #pragma once
 #include "EngineBase.h"
 
+struct ConstantBufferData
+{
+	Microsoft::WRL::ComPtr<ID3D11Buffer> ConstantBuffer;
+	
+	void* Data = nullptr;
+	UINT DataSize = 0;
+};
+
 class RenderBase
 {
 
@@ -37,13 +45,22 @@ public:
 		InitData.SysMemPitch = 0;
 		InitData.SysMemSlicePitch = 0;
 
+		Microsoft::WRL::ComPtr<ID3D11Buffer> NewBuffer;
+
 		HRESULT Result =
-			EngineBase::GetInstance().GetDevice()->CreateBuffer(&CBDesc, &InitData, ConstantBuffer.GetAddressOf());
+			EngineBase::GetInstance().GetDevice()->CreateBuffer(&CBDesc, &InitData, NewBuffer.GetAddressOf());
 
 		if (Result != S_OK)
 		{
 			std::cout << Name << " :" << "CreateConstantBuffer() failed." << std::hex << "\nResult : " << Result << std::endl;
 		};
+
+		ConstantBufferData NewBufferData;
+		NewBufferData.ConstantBuffer = NewBuffer;
+		NewBufferData.Data = reinterpret_cast<void*>(&_Data);
+		NewBufferData.DataSize = sizeof(_Data);
+
+		ConstantBuffers.push_back(NewBufferData);
 	}
 
 	template <typename T>
@@ -70,9 +87,9 @@ public:
 	}
 
 
-	Microsoft::WRL::ComPtr<ID3D11Buffer> GetConstantBuffer()
+	const std::list<ConstantBufferData>& GetConstantBuffer()
 	{
-		return ConstantBuffer;
+		return ConstantBuffers;
 	}
 
 protected:
@@ -81,7 +98,7 @@ protected:
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> VertexBuffer;
     Microsoft::WRL::ComPtr<ID3D11Buffer> IndexBuffer;
-    Microsoft::WRL::ComPtr<ID3D11Buffer> ConstantBuffer;
+    std::list<ConstantBufferData> ConstantBuffers;
 
 	Transform TransFormData;
 

@@ -22,8 +22,15 @@ void BoxRenderer::Render()
     EngineBase::GetInstance().GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     EngineBase::GetInstance().GetContext()->VSSetShader(VSData.VertexShader.Get(), 0, 0);
     EngineBase::GetInstance().GetContext()->IASetInputLayout(VSData.InputLayout.Get());
-    EngineBase::GetInstance().GetContext()->VSSetConstantBuffers(0, 1, ConstantBuffer.GetAddressOf());
     EngineBase::GetInstance().GetContext()->PSSetShader(PS.Get(), 0, 0);
+    
+    int Index = 0;
+    for (const ConstantBufferData& _Data : ConstantBuffers)
+    {
+        EngineBase::GetInstance().GetContext()->VSSetConstantBuffers(Index, 1, _Data.ConstantBuffer.GetAddressOf());
+        EngineBase::GetInstance().GetContext()->PSSetConstantBuffers(Index, 1, _Data.ConstantBuffer.GetAddressOf());
+        Index++;
+    }
     
     UINT IndexCount = Indices.size();
     EngineBase::GetInstance().GetContext()->DrawIndexed(IndexCount, 0, 0);
@@ -36,6 +43,7 @@ void BoxRenderer::Init()
     RenderBase::CreateVertexBuffer();
     RenderBase::CreateIndexBuffer();
     RenderBase::CreateConstantBuffer<Transform>(TransFormData);
+    RenderBase::CreateConstantBuffer(UV);
 }
 
 float Dt = 0.0f;
@@ -62,11 +70,16 @@ void BoxRenderer::Update()
 
     TransFormData.ProjMatrix = TransFormData.ProjMatrix.Transpose();
 
-    D3D11_MAPPED_SUBRESOURCE Ms;
+    UV.x = 0.5f;
 
-    EngineBase::GetInstance().GetContext()->Map(ConstantBuffer.Get(), NULL, D3D11_MAP_WRITE_DISCARD, NULL, &Ms);
-    memcpy(Ms.pData, &TransFormData, sizeof(TransFormData));
-    EngineBase::GetInstance().GetContext()->Unmap(ConstantBuffer.Get(), NULL);
+    for (const ConstantBufferData& _Data : ConstantBuffers)
+    {
+        D3D11_MAPPED_SUBRESOURCE Ms;
+        
+        EngineBase::GetInstance().GetContext()->Map(_Data.ConstantBuffer.Get(), NULL, D3D11_MAP_WRITE_DISCARD, NULL, &Ms);
+        memcpy(Ms.pData, _Data.Data, _Data.DataSize);
+        EngineBase::GetInstance().GetContext()->Unmap(_Data.ConstantBuffer.Get(), NULL);
+    }
 }
 
 void BoxRenderer::CreateVertexAndIndex()

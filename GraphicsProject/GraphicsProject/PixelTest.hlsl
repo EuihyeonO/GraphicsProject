@@ -1,3 +1,8 @@
+cbuffer UV : register(b1)
+{
+    float4 UV;
+};
+
 struct PixelShaderInput
 {
     float4 pos : SV_POSITION;
@@ -7,7 +12,7 @@ struct PixelShaderInput
 
 float4 main(PixelShaderInput _Input) : SV_TARGET
 {
-    if(_Input.TexCoord.x > 0.5f)
+    if(UV.x > _Input.TexCoord.x)
     {
         return float4(1.0f, 0.0f, 0.0f, 1.0f);
     }
