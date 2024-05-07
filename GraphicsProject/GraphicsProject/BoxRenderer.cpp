@@ -9,7 +9,7 @@ BoxRenderer::~BoxRenderer()
 {
 }
 
-void BoxRenderer::Render()
+void BoxRenderer::Render(float _DeltaTime)
 {
     UINT Stride = sizeof(Vertex);
     UINT Offset = 0;
@@ -43,6 +43,8 @@ void BoxRenderer::Render()
     EngineBase::GetInstance().GetContext()->DrawIndexed(IndexCount, 0, 0);
 }
 
+float Rotation = 0.0f;
+
 void BoxRenderer::Init()
 {
     CreateVertexAndIndex();
@@ -55,18 +57,16 @@ void BoxRenderer::Init()
     SetTexture("BoxTexture.png");
     SetSampler("LINEARWRAP");
 
-    EngineBase::GetInstance().AddGUIFunction([] {ImGui::Text("AAA"); });
-    EngineBase::GetInstance().AddGUIFunction([] {ImGui::Text("BBB"); });
-    EngineBase::GetInstance().AddGUIFunction([] {ImGui::Text("CCC"); });
+    EngineBase::GetInstance().AddGUIFunction([] {ImGui::Text("Rotation : %f", Rotation); });
 }
 
-float Dt = 0.0f;
 
-void BoxRenderer::Update()
+void BoxRenderer::Update(float _DeltaTime)
 {
-    Dt += 0.01f;
+    Rotation += 18.0f * _DeltaTime;
+    float RotRad = Rotation / 180.0f * DirectX::XM_PI;
 
-    TransFormData.WorldMatrix = DirectX::SimpleMath::Matrix::CreateScale(0.5f) * DirectX::SimpleMath::Matrix::CreateRotationY(Dt) *
+    TransFormData.WorldMatrix = DirectX::SimpleMath::Matrix::CreateScale(0.5f) * DirectX::SimpleMath::Matrix::CreateRotationY(RotRad) *
         DirectX::SimpleMath::Matrix::CreateTranslation(DirectX::SimpleMath::Vector3(0.0f, -0.3f, 1.0f));
     
     TransFormData.WorldMatrix = TransFormData.WorldMatrix.Transpose();

@@ -95,11 +95,13 @@ void EngineBase::Loop()
         }
         else
         {
+            float CurDelta = ImGui::GetIO().DeltaTime;
+
             ImguiUpdate();
             ImGui::Render();
 
-            Update();
-            Render();
+            Update(CurDelta);
+            Render(CurDelta);
 
             ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
@@ -153,15 +155,15 @@ void EngineBase::LoadAllTexture()
     EngineBase::GetInstance().LoadTexture("BoxTexture.png");
 }
 
-void EngineBase::Update()
+void EngineBase::Update(float _DeltaTime)
 {
     for (std::shared_ptr<RenderBase> Renderer : Renderers)
     {
-        Renderer->Update();
+        Renderer->Update(_DeltaTime);
     }
 }
 
-void EngineBase::Render()
+void EngineBase::Render(float _DeltaTime)
 {
     float clearColor[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
     Context->ClearRenderTargetView(RenderTargetView.Get(), clearColor);
@@ -174,7 +176,7 @@ void EngineBase::Render()
 
     for (std::shared_ptr<RenderBase> Renderer : Renderers)
     {
-        Renderer->Render();
+        Renderer->Render(_DeltaTime);
     }
 }
 

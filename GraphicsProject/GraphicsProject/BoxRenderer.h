@@ -15,9 +15,9 @@ public:
 	BoxRenderer& operator=(BoxRenderer&& _Other) noexcept = delete;
 
 public:
-	virtual void Render() override;
+	virtual void Render(float _DeltaTime) override;
 	virtual void Init() override;
-	virtual void Update() override;
+	virtual void Update(float _DeltaTime) override;
 protected:
 
 private:

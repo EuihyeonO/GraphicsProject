@@ -43,8 +43,8 @@ public:
 	void CreateAllShader();
 	void LoadAllTexture();
 
-	void Update();
-	void Render();
+	void Update(float _DeltaTime);
+	void Render(float _DeltaTime);
 
 	//IMGUI
 public:
