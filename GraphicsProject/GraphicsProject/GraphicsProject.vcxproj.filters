@@ -9,12 +9,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Public\WindowsAPI">
-      <UniqueIdentifier>{dff28de4-720b-4fed-b199-7821e6b783d5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Public\DirectXTK">
-      <UniqueIdentifier>{37cb9e01-f9a9-4efd-bbdc-786b5692f2ac}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Private\Main">
       <UniqueIdentifier>{a3b538f5-dc90-46f1-abdf-9edc525223bc}</UniqueIdentifier>
     </Filter>
@@ -51,82 +45,94 @@
     <Filter Include="Shader\PixelShader">
       <UniqueIdentifier>{de808d6d-96a8-4b68-8cd8-b21c64ce276b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\Library">
+      <UniqueIdentifier>{b753e72f-913c-436c-9377-984db863c68b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Library\STB">
+      <UniqueIdentifier>{fe6cd94b-2ffa-4dce-b173-9b4eec7f9105}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Library\DirectXTK">
+      <UniqueIdentifier>{37cb9e01-f9a9-4efd-bbdc-786b5692f2ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Library\WindowsAPI">
+      <UniqueIdentifier>{dff28de4-720b-4fed-b199-7821e6b783d5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
-      <Filter>Public\WindowsAPI</Filter>
+      <Filter>Public\Library\WindowsAPI</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsProject.h">
-      <Filter>Public\WindowsAPI</Filter>
+      <Filter>Public\Library\WindowsAPI</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
-      <Filter>Public\WindowsAPI</Filter>
+      <Filter>Public\Library\WindowsAPI</Filter>
     </ClInclude>
     <ClInclude Include="framework.h">
-      <Filter>Public\WindowsAPI</Filter>
+      <Filter>Public\Library\WindowsAPI</Filter>
     </ClInclude>
     <ClInclude Include="..\DirectXTK\DDSTextureLoader.h">
-      <Filter>Public\DirectXTK</Filter>
+      <Filter>Public\Library\DirectXTK</Filter>
     </ClInclude>
     <ClInclude Include="..\DirectXTK\DirectXHelpers.h">
-      <Filter>Public\DirectXTK</Filter>
+      <Filter>Public\Library\DirectXTK</Filter>
     </ClInclude>
     <ClInclude Include="..\DirectXTK\Effects.h">
-      <Filter>Public\DirectXTK</Filter>
+      <Filter>Public\Library\DirectXTK</Filter>
     </ClInclude>
     <ClInclude Include="..\DirectXTK\GamePad.h">
-      <Filter>Public\DirectXTK</Filter>
+      <Filter>Public\Library\DirectXTK</Filter>
     </ClInclude>
     <ClInclude Include="..\DirectXTK\GeometricPrimitive.h">
-      <Filter>Public\DirectXTK</Filter>
+      <Filter>Public\Library\DirectXTK</Filter>
     </ClInclude>
     <ClInclude Include="..\DirectXTK\GraphicsMemory.h">
-      <Filter>Public\DirectXTK</Filter>
+      <Filter>Public\Library\DirectXTK</Filter>
     </ClInclude>
     <ClInclude Include="..\DirectXTK\Keyboard.h">
-      <Filter>Public\DirectXTK</Filter>
+      <Filter>Public\Library\DirectXTK</Filter>
     </ClInclude>
     <ClInclude Include="..\DirectXTK\Model.h">
-      <Filter>Public\DirectXTK</Filter>
+      <Filter>Public\Library\DirectXTK</Filter>
     </ClInclude>
     <ClInclude Include="..\DirectXTK\Mouse.h">
-      <Filter>Public\DirectXTK</Filter>
+      <Filter>Public\Library\DirectXTK</Filter>
     </ClInclude>
     <ClInclude Include="..\DirectXTK\PostProcess.h">
-      <Filter>Public\DirectXTK</Filter>
+      <Filter>Public\Library\DirectXTK</Filter>
     </ClInclude>
     <ClInclude Include="..\DirectXTK\PrimitiveBatch.h">
-      <Filter>Public\DirectXTK</Filter>
+      <Filter>Public\Library\DirectXTK</Filter>
     </ClInclude>
     <ClInclude Include="..\DirectXTK\ScreenGrab.h">
-      <Filter>Public\DirectXTK</Filter>
+      <Filter>Public\Library\DirectXTK</Filter>
     </ClInclude>
     <ClInclude Include="..\DirectXTK\SimpleMath.h">
-      <Filter>Public\DirectXTK</Filter>
+      <Filter>Public\Library\DirectXTK</Filter>
     </ClInclude>
     <ClInclude Include="..\DirectXTK\SpriteBatch.h">
-      <Filter>Public\DirectXTK</Filter>
+      <Filter>Public\Library\DirectXTK</Filter>
     </ClInclude>
     <ClInclude Include="..\DirectXTK\SpriteFont.h">
-      <Filter>Public\DirectXTK</Filter>
+      <Filter>Public\Library\DirectXTK</Filter>
     </ClInclude>
     <ClInclude Include="..\DirectXTK\VertexTypes.h">
-      <Filter>Public\DirectXTK</Filter>
+      <Filter>Public\Library\DirectXTK</Filter>
     </ClInclude>
     <ClInclude Include="..\DirectXTK\WICTextureLoader.h">
-      <Filter>Public\DirectXTK</Filter>
+      <Filter>Public\Library\DirectXTK</Filter>
     </ClInclude>
     <ClInclude Include="..\DirectXTK\XboxDDSTextureLoader.h">
-      <Filter>Public\DirectXTK</Filter>
+      <Filter>Public\Library\DirectXTK</Filter>
     </ClInclude>
     <ClInclude Include="..\DirectXTK\Audio.h">
-      <Filter>Public\DirectXTK</Filter>
+      <Filter>Public\Library\DirectXTK</Filter>
     </ClInclude>
     <ClInclude Include="..\DirectXTK\BufferHelpers.h">
-      <Filter>Public\DirectXTK</Filter>
+      <Filter>Public\Library\DirectXTK</Filter>
     </ClInclude>
     <ClInclude Include="..\DirectXTK\CommonStates.h">
-      <Filter>Public\DirectXTK</Filter>
+      <Filter>Public\Library\DirectXTK</Filter>
     </ClInclude>
     <ClInclude Include="RenderBase.h">
       <Filter>Public\Engine\Render</Filter>
@@ -140,10 +146,13 @@
     <ClInclude Include="BoxRenderer.h">
       <Filter>Public\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="..\STB\stb_image.h">
+      <Filter>Public\Library\STB</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\DirectXTK\SimpleMath.inl">
-      <Filter>Public\DirectXTK</Filter>
+      <Filter>Public\Library\DirectXTK</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

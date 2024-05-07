@@ -16,14 +16,21 @@ void BoxRenderer::Render()
     
     VertexShaderData VSData = EngineBase::GetInstance().GetVertexShaderData(L"VertexTest.hlsl");
     Microsoft::WRL::ComPtr<ID3D11PixelShader> PS = EngineBase::GetInstance().GetPixelShaderData(L"PixelTest.hlsl");
-    
+
     EngineBase::GetInstance().GetContext()->IASetVertexBuffers(0, 1, VertexBuffer.GetAddressOf(), &Stride, &Offset);
     EngineBase::GetInstance().GetContext()->IASetIndexBuffer(IndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
     EngineBase::GetInstance().GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     EngineBase::GetInstance().GetContext()->VSSetShader(VSData.VertexShader.Get(), 0, 0);
     EngineBase::GetInstance().GetContext()->IASetInputLayout(VSData.InputLayout.Get());
     EngineBase::GetInstance().GetContext()->PSSetShader(PS.Get(), 0, 0);
+
+    //추후 텍스쳐 여러개 세팅할 수도 있다.
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> SRV = EngineBase::GetInstance().GetTextureData(TextureName).ShaderResourceView;
+    Microsoft::WRL::ComPtr<ID3D11SamplerState> Sampler = EngineBase::GetInstance().GetSampler(SamplerName);
     
+    EngineBase::GetInstance().GetContext()->PSSetShaderResources(0, 1, SRV.GetAddressOf());
+    EngineBase::GetInstance().GetContext()->PSSetSamplers(0, 1, Sampler.GetAddressOf());
+
     int Index = 0;
     for (const ConstantBufferData& _Data : ConstantBuffers)
     {
@@ -32,7 +39,7 @@ void BoxRenderer::Render()
         Index++;
     }
     
-    UINT IndexCount = Indices.size();
+    UINT IndexCount = (UINT)Indices.size();
     EngineBase::GetInstance().GetContext()->DrawIndexed(IndexCount, 0, 0);
 }
 
@@ -44,6 +51,9 @@ void BoxRenderer::Init()
     RenderBase::CreateIndexBuffer();
     RenderBase::CreateConstantBuffer<Transform>(TransFormData);
     RenderBase::CreateConstantBuffer(UV);
+
+    SetTexture("BoxTexture.png");
+    SetSampler("LINEARWRAP");
 }
 
 float Dt = 0.0f;

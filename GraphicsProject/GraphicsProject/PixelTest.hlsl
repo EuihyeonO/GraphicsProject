@@ -10,14 +10,11 @@ struct PixelShaderInput
     float2 TexCoord : TEXCOORD;
 };
 
+Texture2D DiffuseTexture : register(t0);
+SamplerState Sampler : register(s0);
+
 float4 main(PixelShaderInput _Input) : SV_TARGET
 {
-    if(UV.x > _Input.TexCoord.x)
-    {
-        return float4(1.0f, 0.0f, 0.0f, 1.0f);
-    }
-    else
-    {
-        return float4(0.0f, 0.0f, 1.0f, 1.0f);
-    }
+    float4 Color = DiffuseTexture.Sample(Sampler, _Input.TexCoord);
+    return Color;
 }

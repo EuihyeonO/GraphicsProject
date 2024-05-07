@@ -74,6 +74,15 @@ public:
 		return std::dynamic_pointer_cast<T>(NewRenderer);
 	}
 
+	void SetTexture(const std::string& _TextureName)
+	{
+		TextureName = _TextureName;
+	}
+
+	void SetSampler(const std::string& _SamplerName)
+	{
+		SamplerName = _SamplerName;
+	}
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> GetBertexBuffer()
 	{
@@ -103,6 +112,10 @@ protected:
 	Transform TransFormData;
 
 	std::string Name = "";
+
+	std::string TextureName = "";
+	std::string SamplerName = "";
+	
 private:
 };
 

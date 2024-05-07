@@ -1,6 +1,9 @@
 #include "EngineBase.h"
 #include "BoxRenderer.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
 
@@ -127,6 +130,11 @@ void EngineBase::CreateAllShader()
             return;
         }
     }
+}
+
+void EngineBase::LoadAllTexture()
+{
+    EngineBase::GetInstance().LoadTexture("BoxTexture.png");
 }
 
 void EngineBase::Update()
@@ -520,6 +528,125 @@ BOOL EngineBase::CreateDepthStencil()
     return TRUE;
 }
 
+BOOL EngineBase::CreateSampler()
+{
+    {
+        Microsoft::WRL::ComPtr<ID3D11SamplerState> NewSampler;
+
+        // Texture sampler 만들기
+        D3D11_SAMPLER_DESC SamplerDesc;
+        ZeroMemory(&SamplerDesc, sizeof(SamplerDesc));
+
+        SamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+        SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+        SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+        SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+        SamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+        SamplerDesc.MinLOD = 0;
+        SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+        // Create the Sample State
+        HRESULT Result = EngineBase::GetInstance().GetDevice()->CreateSamplerState(&SamplerDesc, NewSampler.GetAddressOf());
+        if (Result != S_OK)
+        {
+            std::cout << "CreateSamplerState failed : LINEARWRAP" << std::endl;
+            return FALSE;
+        }
+
+        Samplers.insert({ "LINEARWRAP", NewSampler });
+    }
+
+    {
+        Microsoft::WRL::ComPtr<ID3D11SamplerState> NewSampler;
+
+        // Texture sampler 만들기
+        D3D11_SAMPLER_DESC SamplerDesc;
+        ZeroMemory(&SamplerDesc, sizeof(SamplerDesc));
+
+        SamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+        SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+        SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+        SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+        SamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+        SamplerDesc.MinLOD = 0;
+        SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+        // Create the Sample State
+        HRESULT Result = EngineBase::GetInstance().GetDevice()->CreateSamplerState(&SamplerDesc, NewSampler.GetAddressOf());
+        if (Result != S_OK)
+        {
+            std::cout << "CreateSamplerState failed : LINEARCLAMP" << std::endl;
+            return FALSE;
+        }
+
+        Samplers.insert({ "LINEARCLAMP", NewSampler });
+    }
+
+    return TRUE;
+}
+
+BOOL EngineBase::LoadTexture(const std::string& _TextureName)
+{
+    std::string Path = "../Texture/";
+    Path += _TextureName;
+
+    int Width = 0;
+    int Height = 0;
+    int Channels = 0;
+
+    unsigned char* LoadedImage = stbi_load(Path.c_str(), &Width, &Height, &Channels, 0);
+    if (LoadedImage == nullptr)
+    {
+        std::cout << "Image Load Failed" << std::endl;
+        return FALSE;
+    }
+
+    std::vector<uint8_t> Image;
+
+    Image.resize(Width * Height * Channels);
+    memcpy(Image.data(), LoadedImage, Image.size() * sizeof(uint8_t));
+
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> Texture;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> SRV;
+
+    D3D11_TEXTURE2D_DESC TexDesc = {};
+    TexDesc.Width = Width;
+    TexDesc.Height = Height;
+    TexDesc.MipLevels = TexDesc.ArraySize = 1;
+    TexDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    TexDesc.SampleDesc.Count = 1;
+    TexDesc.Usage = D3D11_USAGE_IMMUTABLE;
+    TexDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+    D3D11_SUBRESOURCE_DATA InitData;
+    InitData.pSysMem = Image.data();
+    InitData.SysMemPitch = TexDesc.Width * sizeof(uint8_t) * Channels;
+
+    HRESULT Result = EngineBase::GetInstance().GetDevice()->CreateTexture2D(&TexDesc, &InitData, Texture.GetAddressOf());
+    if (Result != S_OK)
+    {
+        std::cout << "CreateTexture2D failed " << std::endl;
+        return FALSE;
+    }
+
+    Result = EngineBase::GetInstance().GetDevice()->CreateShaderResourceView(Texture.Get(), nullptr, SRV.GetAddressOf());
+    if (Result != S_OK)
+    {
+        std::cout << "CreateTexture2D failed " << std::endl;
+        return FALSE;
+    }
+
+    TextureData NewTextureData;
+    NewTextureData.Texture = Texture;
+    NewTextureData.ShaderResourceView = SRV;
+    
+    Textures.insert({ _TextureName, NewTextureData });
+
+    stbi_image_free(LoadedImage);
+
+    return TRUE;
+}
+
 BOOL EngineBase::Init(HINSTANCE _hInstance, int _Width, int _Height)
 {
     WindowWidth = _Width;
@@ -536,6 +663,8 @@ BOOL EngineBase::Init(HINSTANCE _hInstance, int _Width, int _Height)
     }
 
     CreateAllShader();
+    LoadAllTexture();
+    CreateSampler();
 
     RenderBase::CreateRenderer<BoxRenderer>();
 
