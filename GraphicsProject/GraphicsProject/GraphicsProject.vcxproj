@@ -71,16 +71,16 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>..\DirectXTK;..\STB</IncludePath>
+    <IncludePath>..\DirectXTK;..\STB;..\IMGUI</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>..\DirectXTK;..\STB</IncludePath>
+    <IncludePath>..\DirectXTK;..\STB;..\IMGUI</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>..\DirectXTK;..\STB</IncludePath>
+    <IncludePath>..\DirectXTK;..\STB;..\IMGUI</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>..\DirectXTK;..\STB</IncludePath>
+    <IncludePath>..\DirectXTK;..\STB;..\IMGUI</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -160,6 +160,14 @@
     <ClInclude Include="..\DirectXTK\VertexTypes.h" />
     <ClInclude Include="..\DirectXTK\WICTextureLoader.h" />
     <ClInclude Include="..\DirectXTK\XboxDDSTextureLoader.h" />
+    <ClInclude Include="..\IMGUI\imconfig.h" />
+    <ClInclude Include="..\IMGUI\imgui.h" />
+    <ClInclude Include="..\IMGUI\imgui_impl_dx11.h" />
+    <ClInclude Include="..\IMGUI\imgui_impl_win32.h" />
+    <ClInclude Include="..\IMGUI\imgui_internal.h" />
+    <ClInclude Include="..\IMGUI\imstb_rectpack.h" />
+    <ClInclude Include="..\IMGUI\imstb_textedit.h" />
+    <ClInclude Include="..\IMGUI\imstb_truetype.h" />
     <ClInclude Include="..\STB\stb_image.h" />
     <ClInclude Include="BaseHeader.h" />
     <ClInclude Include="BoxRenderer.h">
@@ -180,6 +188,13 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\IMGUI\imgui.cpp" />
+    <ClCompile Include="..\IMGUI\imgui_demo.cpp" />
+    <ClCompile Include="..\IMGUI\imgui_draw.cpp" />
+    <ClCompile Include="..\IMGUI\imgui_impl_dx11.cpp" />
+    <ClCompile Include="..\IMGUI\imgui_impl_win32.cpp" />
+    <ClCompile Include="..\IMGUI\imgui_tables.cpp" />
+    <ClCompile Include="..\IMGUI\imgui_widgets.cpp" />
     <ClCompile Include="BoxRenderer.cpp">
       <SubType>
       </SubType>

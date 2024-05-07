@@ -2,6 +2,11 @@
 
 #include "Windows.h"
 
+#include "imgui.h"
+#include "imgui_impl_win32.h"
+#include "imgui_impl_dx11.h"
+
+#include <functional>
 #include <iostream>
 #include <string>
 #include <SimpleMath.h>
@@ -14,6 +19,7 @@
 #include <d3dcompiler.h>
 #include <d3d11.h>
 #include <wrl.h>
+
 
 struct Vertex
 {

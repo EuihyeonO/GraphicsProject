@@ -46,6 +46,16 @@ public:
 	void Update();
 	void Render();
 
+	//IMGUI
+public:
+	BOOL ImguiInit();
+	void ImguiUpdate();
+
+	void AddGUIFunction(const std::function<void()> _Func)
+	{
+		GUIFunctions.push_back(_Func);
+	}
+
 	//Windows API
 public:
 	BOOL WindowInit(HINSTANCE _hInstance);
@@ -124,6 +134,7 @@ private:
 	std::unordered_map<std::string, TextureData> Textures;
 	std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11SamplerState>> Samplers;
 
+	std::list<std::function<void()>> GUIFunctions;
 private:
 	int WindowWidth = 0;
 	int WindowHeight = 0;

@@ -54,6 +54,10 @@ void BoxRenderer::Init()
 
     SetTexture("BoxTexture.png");
     SetSampler("LINEARWRAP");
+
+    EngineBase::GetInstance().AddGUIFunction([] {ImGui::Text("AAA"); });
+    EngineBase::GetInstance().AddGUIFunction([] {ImGui::Text("BBB"); });
+    EngineBase::GetInstance().AddGUIFunction([] {ImGui::Text("CCC"); });
 }
 
 float Dt = 0.0f;

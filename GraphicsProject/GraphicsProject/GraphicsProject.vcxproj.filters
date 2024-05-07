@@ -57,6 +57,9 @@
     <Filter Include="Public\Library\WindowsAPI">
       <UniqueIdentifier>{dff28de4-720b-4fed-b199-7821e6b783d5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\Library\IMGUI">
+      <UniqueIdentifier>{c10f94b3-0457-4af5-a84e-646fa658fce8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -149,6 +152,30 @@
     <ClInclude Include="..\STB\stb_image.h">
       <Filter>Public\Library\STB</Filter>
     </ClInclude>
+    <ClInclude Include="..\IMGUI\imgui_impl_dx11.h">
+      <Filter>Public\Library\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\IMGUI\imgui_impl_win32.h">
+      <Filter>Public\Library\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\IMGUI\imgui_internal.h">
+      <Filter>Public\Library\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\IMGUI\imstb_rectpack.h">
+      <Filter>Public\Library\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\IMGUI\imstb_textedit.h">
+      <Filter>Public\Library\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\IMGUI\imstb_truetype.h">
+      <Filter>Public\Library\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\IMGUI\imconfig.h">
+      <Filter>Public\Library\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\IMGUI\imgui.h">
+      <Filter>Public\Library\IMGUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\DirectXTK\SimpleMath.inl">
@@ -167,6 +194,27 @@
     </ClCompile>
     <ClCompile Include="BoxRenderer.cpp">
       <Filter>Private\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\IMGUI\imgui_draw.cpp">
+      <Filter>Public\Library\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\IMGUI\imgui_impl_dx11.cpp">
+      <Filter>Public\Library\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\IMGUI\imgui_impl_win32.cpp">
+      <Filter>Public\Library\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\IMGUI\imgui_tables.cpp">
+      <Filter>Public\Library\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\IMGUI\imgui_widgets.cpp">
+      <Filter>Public\Library\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\IMGUI\imgui.cpp">
+      <Filter>Public\Library\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\IMGUI\imgui_demo.cpp">
+      <Filter>Public\Library\IMGUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

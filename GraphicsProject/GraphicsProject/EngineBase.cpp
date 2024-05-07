@@ -7,6 +7,8 @@
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
 
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 EngineBase::EngineBase()
 {
 }
@@ -36,6 +38,9 @@ ATOM EngineBase::MyRegisterClass(HINSTANCE _hInstance)
 
 LRESULT CALLBACK EngineBase::WndProc(HWND _hWnd, UINT _message, WPARAM _wParam, LPARAM _lParam)
 {
+    if (ImGui_ImplWin32_WndProcHandler(_hWnd, _message, _wParam, _lParam))
+        return true;
+
     switch (_message) {
     case WM_SIZE:
         break;
@@ -81,7 +86,7 @@ BOOL EngineBase::InitInstance(HINSTANCE _hInstance, int nCmdShow)
 
 void EngineBase::Loop()
 {
-    while(WM_QUIT != msg.message)
+    while (WM_QUIT != msg.message)
     {
         if ((PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)))
         {
@@ -90,14 +95,25 @@ void EngineBase::Loop()
         }
         else
         {
+            ImguiUpdate();
+            ImGui::Render();
+
             Update();
             Render();
+
+            ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+            SwapChain->Present(1, 0);
         }
     }
 }
 
 WPARAM EngineBase::End()
 {
+    ImGui_ImplDX11_Shutdown();
+    ImGui_ImplWin32_Shutdown();
+    ImGui::DestroyContext();
+
     return msg.wParam;
 }
 
@@ -160,8 +176,44 @@ void EngineBase::Render()
     {
         Renderer->Render();
     }
+}
 
-    SwapChain->Present(1, 0);
+BOOL EngineBase::ImguiInit()
+{
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+
+    ImGui::StyleColorsDark();
+
+    if(!ImGui_ImplWin32_Init(hWnd))
+    {
+        std::cout << "IMGUI Win32 Init Failed" << std::endl;
+        return FALSE;
+    }
+
+    if (!ImGui_ImplDX11_Init(Device.Get(), Context.Get()))
+    {
+        std::cout << "IMGUI Dx11 Init Failed" << std::endl;
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+void EngineBase::ImguiUpdate()
+{
+    ImGui_ImplDX11_NewFrame();
+    ImGui_ImplWin32_NewFrame();
+    ImGui::NewFrame();
+
+    ImGui::Begin("Hello, world!"); 
+    
+    for (const std::function<void()> _Func : GUIFunctions)
+    {
+        _Func();
+    }
+
+    ImGui::End();
 }
 
 BOOL EngineBase::WindowInit(HINSTANCE _hInstance)
@@ -658,6 +710,11 @@ BOOL EngineBase::Init(HINSTANCE _hInstance, int _Width, int _Height)
     }
 
     if (!DirectXInit())
+    {
+        return FALSE;
+    }
+
+    if (!ImguiInit())
     {
         return FALSE;
     }
