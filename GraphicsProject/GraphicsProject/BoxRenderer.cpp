@@ -101,9 +101,6 @@ void BoxRenderer::CreateVertexAndIndex()
     std::vector<DirectX::SimpleMath::Vector3> Positions;
     Positions.reserve(24);
 
-    std::vector<DirectX::SimpleMath::Vector3> Colors;
-    Colors.reserve(24);
-
     std::vector<DirectX::SimpleMath::Vector3> Normals;
     Normals.reserve(24);
 
@@ -116,11 +113,6 @@ void BoxRenderer::CreateVertexAndIndex()
     Positions.push_back({ 1.0f, 1.0f, 1.0f });
     Positions.push_back({ 1.0f, 1.0f, -1.0f });
     
-    Colors.push_back({1.0f, 0.0f, 0.0f});
-    Colors.push_back({1.0f, 0.0f, 0.0f});
-    Colors.push_back({1.0f, 0.0f, 0.0f});
-    Colors.push_back({1.0f, 0.0f, 0.0f});
-
     Normals.push_back({0.0f, 1.0f, 0.0f});
     Normals.push_back({0.0f, 1.0f, 0.0f});
     Normals.push_back({0.0f, 1.0f, 0.0f});
@@ -136,11 +128,6 @@ void BoxRenderer::CreateVertexAndIndex()
     Positions.push_back({ 1.0f, -1.0f, -1.0f });
     Positions.push_back({ -1.0f, -1.0f, -1.0f });
     Positions.push_back({ -1.0f, -1.0f, 1.0f });
-
-    Colors.push_back({ 1.0f, 0.0f, 0.0f });
-    Colors.push_back({ 1.0f, 0.0f, 0.0f });
-    Colors.push_back({ 1.0f, 0.0f, 0.0f });
-    Colors.push_back({ 1.0f, 0.0f, 0.0f });
 
     Normals.push_back({ 0.0f, -1.0f, 0.0f });
     Normals.push_back({ 0.0f, -1.0f, 0.0f });
@@ -158,11 +145,6 @@ void BoxRenderer::CreateVertexAndIndex()
     Positions.push_back({ -1.0f, 1.0f, 1.0f });
     Positions.push_back({ -1.0f, 1.0f, -1.0f });
 
-    Colors.push_back({ 1.0f, 0.0f, 0.0f });
-    Colors.push_back({ 1.0f, 0.0f, 0.0f });
-    Colors.push_back({ 1.0f, 0.0f, 0.0f });
-    Colors.push_back({ 1.0f, 0.0f, 0.0f });
-
     Normals.push_back({ -1.0f, 0.0f, 0.0f });
     Normals.push_back({ -1.0f, 0.0f, 0.0f });
     Normals.push_back({ -1.0f, 0.0f, 0.0f });
@@ -178,11 +160,6 @@ void BoxRenderer::CreateVertexAndIndex()
     Positions.push_back({ 1.0f, 1.0f, 1.0f });
     Positions.push_back({ 1.0f, -1.0f, 1.0f });
     Positions.push_back({ 1.0f, -1.0f, -1.0f });
-
-    Colors.push_back({ 1.0f, 0.0f, 0.0f });
-    Colors.push_back({ 1.0f, 0.0f, 0.0f });
-    Colors.push_back({ 1.0f, 0.0f, 0.0f });
-    Colors.push_back({ 1.0f, 0.0f, 0.0f });
 
     Normals.push_back({ 1.0f, 0.0f, 0.0f });
     Normals.push_back({ 1.0f, 0.0f, 0.0f });
@@ -200,11 +177,6 @@ void BoxRenderer::CreateVertexAndIndex()
     Positions.push_back({ 1.0f, -1.0f, 1.0f });
     Positions.push_back({ 1.0f, 1.0f, 1.0f });
 
-    Colors.push_back({ 1.0f, 0.0f, 0.0f });
-    Colors.push_back({ 1.0f, 0.0f, 0.0f });
-    Colors.push_back({ 1.0f, 0.0f, 0.0f });
-    Colors.push_back({ 1.0f, 0.0f, 0.0f });
-
     Normals.push_back({ 0.0f, 0.0f, 1.0f });
     Normals.push_back({ 0.0f, 0.0f, 1.0f });
     Normals.push_back({ 0.0f, 0.0f, 1.0f });
@@ -221,11 +193,6 @@ void BoxRenderer::CreateVertexAndIndex()
     Positions.push_back({ 1.0f, 1.0f, -1.0f });
     Positions.push_back({ 1.0f, -1.0f, -1.0f });
 
-    Colors.push_back({ 1.0f, 0.0f, 0.0f });
-    Colors.push_back({ 1.0f, 0.0f, 0.0f });
-    Colors.push_back({ 1.0f, 0.0f, 0.0f });
-    Colors.push_back({ 1.0f, 0.0f, 0.0f });
-
     Normals.push_back({ 0.0f, 0.0f, -1.0f });
     Normals.push_back({ 0.0f, 0.0f, -1.0f });
     Normals.push_back({ 0.0f, 0.0f, -1.0f });
@@ -240,7 +207,6 @@ void BoxRenderer::CreateVertexAndIndex()
     {
         Vertex NewVertex;
         NewVertex.Position = Positions[i];
-        NewVertex.Color = Colors[i];
         NewVertex.Normal = Normals[i];
         NewVertex.TexCoord = TexCoords[i];
 

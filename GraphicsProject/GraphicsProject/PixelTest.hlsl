@@ -6,7 +6,6 @@ cbuffer UV : register(b1)
 struct PixelShaderInput
 {
     float4 pos : SV_POSITION;
-    float3 color : COLOR;
     float2 TexCoord : TEXCOORD;
 };
 
