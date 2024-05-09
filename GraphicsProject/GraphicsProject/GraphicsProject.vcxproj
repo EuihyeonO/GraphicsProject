@@ -211,6 +211,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\DirectXTK\SimpleMath.inl" />
+    <None Include="LightHeader.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PixelTest.hlsl">

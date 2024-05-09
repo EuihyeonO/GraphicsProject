@@ -22,7 +22,7 @@ public:
 	RenderBase& operator=(RenderBase&& _Other) noexcept = delete;
 
 public:
-	virtual void Init() = 0;
+	virtual void Init();
 	virtual void Render(float _DeltaTime) = 0;
 	virtual void Update(float _DeltaTime) = 0;
 	
@@ -69,6 +69,11 @@ public:
 		std::shared_ptr<class RenderBase> NewRenderer = std::make_shared<T>();
 		NewRenderer->Init();
 
+		if (NewRenderer->isCallInitFunction() == false)
+		{
+			std::cout << NewRenderer->Name << " : RenderBase::Init() is not called. " << std::endl;
+		}
+
 		EngineBase::GetInstance().AddRenderer(NewRenderer);
 
 		return std::dynamic_pointer_cast<T>(NewRenderer);
@@ -101,6 +106,11 @@ public:
 		return ConstantBuffers;
 	}
 
+	bool isCallInitFunction()
+	{
+		return isCallInit;
+	}
+
 protected:
 	std::vector<struct Vertex> Vertices;
 	std::vector<uint16_t> Indices;
@@ -115,7 +125,8 @@ protected:
 
 	std::string TextureName = "";
 	std::string SamplerName = "";
-	
+
 private:
+	bool isCallInit = false;
 };
 

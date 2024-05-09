@@ -60,6 +60,9 @@
     <Filter Include="Public\Library\IMGUI">
       <UniqueIdentifier>{c10f94b3-0457-4af5-a84e-646fa658fce8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shader\Header">
+      <UniqueIdentifier>{0abf5dc3-bfc1-4e76-8905-dc78ea808d1a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -180,6 +183,9 @@
   <ItemGroup>
     <None Include="..\DirectXTK\SimpleMath.inl">
       <Filter>Public\Library\DirectXTK</Filter>
+    </None>
+    <None Include="LightHeader.hlsli">
+      <Filter>Shader\Header</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

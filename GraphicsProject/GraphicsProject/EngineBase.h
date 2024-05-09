@@ -121,12 +121,29 @@ public:
 		return Samplers[_SamplerName];
 	}
 
+	LightCBuffer& GetWorldLight()
+	{
+		return WorldLight;
+	}
+
+public:
+
+	DirectX::SimpleMath::Matrix ViewMat;
+	DirectX::SimpleMath::Vector3 ViewRot;
+
+	DirectX::SimpleMath::Vector3 EyePos = { 0.0f, 0.0f, -1.0f };
+	DirectX::SimpleMath::Vector3 FocusPos = { 0.0f, 0.0f, 1.0f };
+	DirectX::SimpleMath::Vector3 UpDir = { 0.0f, 1.0f, 0.0f };
+
 public:
 	void AddRenderer(std::shared_ptr<class RenderBase> _NewRenderer);
 
 protected:
 
+
 private:
+	LightCBuffer WorldLight;
+
 	std::list<std::shared_ptr<class RenderBase>> Renderers;
 
 	std::unordered_map<std::wstring, VertexShaderData> VertexShaders;

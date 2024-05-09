@@ -47,17 +47,17 @@ float Rotation = 0.0f;
 
 void BoxRenderer::Init()
 {
+    RenderBase::Init();
+
     CreateVertexAndIndex();
     
     RenderBase::CreateVertexBuffer();
     RenderBase::CreateIndexBuffer();
+
     RenderBase::CreateConstantBuffer<Transform>(TransFormData);
-    RenderBase::CreateConstantBuffer(UV);
 
     SetTexture("BoxTexture.png");
     SetSampler("LINEARWRAP");
-
-    EngineBase::GetInstance().AddGUIFunction([] {ImGui::Text("Rotation : %f", Rotation); });
 }
 
 
@@ -66,13 +66,12 @@ void BoxRenderer::Update(float _DeltaTime)
     Rotation += 18.0f * _DeltaTime;
     float RotRad = Rotation / 180.0f * DirectX::XM_PI;
 
+    TransFormData.ViewMAtrix = EngineBase::GetInstance().ViewMat;
+
     TransFormData.WorldMatrix = DirectX::SimpleMath::Matrix::CreateScale(0.5f) * DirectX::SimpleMath::Matrix::CreateRotationY(RotRad) *
-        DirectX::SimpleMath::Matrix::CreateTranslation(DirectX::SimpleMath::Vector3(0.0f, -0.3f, 1.0f));
+        DirectX::SimpleMath::Matrix::CreateTranslation(DirectX::SimpleMath::Vector3(0.0f, 0.0f, 1.0f));
     
     TransFormData.WorldMatrix = TransFormData.WorldMatrix.Transpose();
-   
-    TransFormData.ViewMAtrix =
-        DirectX::XMMatrixLookAtLH({ 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f });
    
     TransFormData.ViewMAtrix = TransFormData.ViewMAtrix.Transpose();
 
@@ -83,8 +82,6 @@ void BoxRenderer::Update(float _DeltaTime)
         DirectX::XMMatrixPerspectiveFovLH(fovAngleY, AspectRatio, 0.01f, 100.0f);
 
     TransFormData.ProjMatrix = TransFormData.ProjMatrix.Transpose();
-
-    UV.x = 0.5f;
 
     for (const ConstantBufferData& _Data : ConstantBuffers)
     {

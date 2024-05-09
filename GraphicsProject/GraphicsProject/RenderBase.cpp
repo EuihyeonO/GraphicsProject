@@ -8,6 +8,13 @@ RenderBase::~RenderBase()
 {
 }
 
+void RenderBase::Init()
+{
+    isCallInit = true;
+
+    CreateConstantBuffer(EngineBase::GetInstance().GetWorldLight());
+}
+
 void RenderBase::CreateVertexBuffer()
 {
     D3D11_BUFFER_DESC BufferDesc = { 0, };

@@ -34,3 +34,25 @@ struct Transform
 	DirectX::SimpleMath::Matrix ViewMAtrix = DirectX::SimpleMath::Matrix();
 	DirectX::SimpleMath::Matrix ProjMatrix = DirectX::SimpleMath::Matrix();
 };
+
+struct Light
+{
+	DirectX::SimpleMath::Vector3 Strength = { 1.0f, 1.0f, 1.0f };
+	float FallOffStart = 0.0f;
+
+	DirectX::SimpleMath::Vector3 Direction = { 0.0f, 0.0f, 1.0f };
+	float FallOffEnd = 10.0f;
+
+	DirectX::SimpleMath::Vector3 Position = { 0.0f, 0.0f, -2.0f };
+	float SpotPower = 1.0f;
+};
+
+#define LIGHT_NUM 3
+
+struct LightCBuffer
+{
+	DirectX::SimpleMath::Vector3 EyeWorld;
+	float Ambient = 0.1f;
+
+	Light Lights[LIGHT_NUM];
+};

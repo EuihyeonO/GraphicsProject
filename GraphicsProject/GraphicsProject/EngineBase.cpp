@@ -97,6 +97,14 @@ void EngineBase::Loop()
         {
             float CurDelta = ImGui::GetIO().DeltaTime;
 
+            //아래 코드 정리하자
+            ViewMat = DirectX::XMMatrixLookAtLH(EyePos, FocusPos, UpDir);
+            ViewMat *= DirectX::SimpleMath::Matrix::CreateRotationX(ViewRot.x) *
+                       DirectX::SimpleMath::Matrix::CreateRotationY(ViewRot.y) *
+                       DirectX::SimpleMath::Matrix::CreateRotationZ(ViewRot.z);
+    
+            WorldLight.EyeWorld = DirectX::SimpleMath::Vector3::Transform(DirectX::SimpleMath::Vector3(0.0f), ViewMat.Invert());
+
             ImguiUpdate();
             ImGui::Render();
 
@@ -198,6 +206,7 @@ BOOL EngineBase::ImguiInit()
         return FALSE;
     }
 
+    AddGUIFunction([this] {ImGui::SliderFloat3("Rot", &ViewRot.x, 0.0f, 3.14f); });
     return TRUE;
 }
 
@@ -209,10 +218,12 @@ void EngineBase::ImguiUpdate()
 
     ImGui::Begin("Hello, world!"); 
     
+
     for (const std::function<void()> _Func : GUIFunctions)
     {
         _Func();
     }
+
 
     ImGui::End();
 }
@@ -410,7 +421,7 @@ BOOL EngineBase::CreateVertexShader(const std::wstring& _ShaderFileName, std::ve
     CompileFlag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif
 
-    HRESULT Result = D3DCompileFromFile(_ShaderFileName.c_str(), 0, 0, "main", "vs_5_0", CompileFlag, 0, &ShaderBlob, &ErrorBlob);
+    HRESULT Result = D3DCompileFromFile(_ShaderFileName.c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "vs_5_0", CompileFlag, 0, &ShaderBlob, &ErrorBlob);
 
     if (Result != S_OK) 
     {
@@ -483,7 +494,7 @@ BOOL EngineBase::CreatePixelShader(const std::wstring& _ShaderFileName)
     CompileFlag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif
 
-    HRESULT Result = D3DCompileFromFile(_ShaderFileName.c_str(), 0, 0, "main", "ps_5_0", CompileFlag, 0, &ShaderBlob, &ErrorBlob);
+    HRESULT Result = D3DCompileFromFile(_ShaderFileName.c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "ps_5_0", CompileFlag, 0, &ShaderBlob, &ErrorBlob);
     
     if (Result != S_OK)
     {
