@@ -43,8 +43,6 @@ void BoxRenderer::Render(float _DeltaTime)
     EngineBase::GetInstance().GetContext()->DrawIndexed(IndexCount, 0, 0);
 }
 
-float Rotation = 0.0f;
-
 void BoxRenderer::Init()
 {
     RenderBase::Init();
@@ -54,25 +52,18 @@ void BoxRenderer::Init()
     RenderBase::CreateVertexBuffer();
     RenderBase::CreateIndexBuffer();
 
-    RenderBase::CreateConstantBuffer<Transform>(TransFormData);
-
     SetTexture("BoxTexture.png");
     SetSampler("LINEARWRAP");
 }
 
-
 void BoxRenderer::Update(float _DeltaTime)
 {
-    Rotation += 18.0f * _DeltaTime;
-    float RotRad = Rotation / 180.0f * DirectX::XM_PI;
-
-    TransFormData.ViewMAtrix = EngineBase::GetInstance().ViewMat;
-
-    TransFormData.WorldMatrix = DirectX::SimpleMath::Matrix::CreateScale(0.5f) * DirectX::SimpleMath::Matrix::CreateRotationY(RotRad) *
+    TransFormData.WorldMatrix = DirectX::SimpleMath::Matrix::CreateScale(0.5f) * DirectX::SimpleMath::Matrix::CreateRotationY(0.0f) *
         DirectX::SimpleMath::Matrix::CreateTranslation(DirectX::SimpleMath::Vector3(0.0f, 0.0f, 1.0f));
     
     TransFormData.WorldMatrix = TransFormData.WorldMatrix.Transpose();
    
+    TransFormData.ViewMAtrix = EngineBase::GetInstance().ViewMat;
     TransFormData.ViewMAtrix = TransFormData.ViewMAtrix.Transpose();
 
     const float AspectRatio = 1600.0f / 900.0f;
@@ -82,6 +73,10 @@ void BoxRenderer::Update(float _DeltaTime)
         DirectX::XMMatrixPerspectiveFovLH(fovAngleY, AspectRatio, 0.01f, 100.0f);
 
     TransFormData.ProjMatrix = TransFormData.ProjMatrix.Transpose();
+
+    TransFormData.InvTranspose = TransFormData.WorldMatrix;
+    TransFormData.InvTranspose.Translation({ 0.0f, 0.0f, 0.0f });
+    TransFormData.InvTranspose = TransFormData.InvTranspose.Transpose().Invert();
 
     for (const ConstantBufferData& _Data : ConstantBuffers)
     {

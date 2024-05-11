@@ -98,11 +98,16 @@ void EngineBase::Loop()
             float CurDelta = ImGui::GetIO().DeltaTime;
 
             //아래 코드 정리하자
-            ViewMat = DirectX::XMMatrixLookAtLH(EyePos, FocusPos, UpDir);
-            ViewMat *= DirectX::SimpleMath::Matrix::CreateRotationX(ViewRot.x) *
-                       DirectX::SimpleMath::Matrix::CreateRotationY(ViewRot.y) *
-                       DirectX::SimpleMath::Matrix::CreateRotationZ(ViewRot.z);
-    
+            DirectX::SimpleMath::Matrix RotMat = DirectX::SimpleMath::Matrix::CreateRotationX(CameraRotation.x) *
+                                                 DirectX::SimpleMath::Matrix::CreateRotationY(CameraRotation.y) *
+                                                 DirectX::SimpleMath::Matrix::CreateRotationZ(CameraRotation.z);
+            
+            EyePos = CameraTranslation;
+            EyeDir = DirectX::XMVector3Transform({ 0.0f, 0.0f, 1.0f }, RotMat);
+            UpDir = DirectX::XMVector3TransformCoord({ 0.0f, 1.0f, 0.0f }, RotMat);
+
+            ViewMat = DirectX::XMMatrixLookToLH(EyePos, EyeDir, UpDir);
+
             WorldLight.EyeWorld = DirectX::SimpleMath::Vector3::Transform(DirectX::SimpleMath::Vector3(0.0f), ViewMat.Invert());
 
             ImguiUpdate();
@@ -172,7 +177,7 @@ void EngineBase::Update(float _DeltaTime)
 
 void EngineBase::Render(float _DeltaTime)
 {
-    float clearColor[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
+    float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
     Context->ClearRenderTargetView(RenderTargetView.Get(), clearColor);
     Context->ClearDepthStencilView(DepthStencilView.Get(),
         D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -185,6 +190,24 @@ void EngineBase::Render(float _DeltaTime)
     {
         Renderer->Render(_DeltaTime);
     }
+}
+
+void EngineBase::SetLight()
+{
+    WorldLight.Lights[0].Direction = { 0.0f, 0.0f, 1.0f };
+
+    WorldLight.Lights[1].Position = { -2.0f, 0.0f, 1.0f };
+    WorldLight.Lights[1].Direction = { 0.0f, 1.0f, 0.0f };
+    WorldLight.Lights[1].Strength = { 2.0f, 0.0f, 0.0f };
+    WorldLight.Lights[1].FallOffStart = 1.0f;
+    WorldLight.Lights[1].FallOffEnd = 5.0f;
+
+    WorldLight.Lights[2].Position = { 0.0f, 2.0f, 1.0f };
+    WorldLight.Lights[2].Direction = { 0.0f, -1.0f, 0.0f };
+    WorldLight.Lights[2].Strength = { 0.0f, 2.0f, 0.0f };
+    WorldLight.Lights[2].FallOffStart = 1.0f;
+    WorldLight.Lights[2].FallOffEnd = 2.0f;
+    WorldLight.Lights[2].SpotPower = 10.0f;
 }
 
 BOOL EngineBase::ImguiInit()
@@ -206,7 +229,10 @@ BOOL EngineBase::ImguiInit()
         return FALSE;
     }
 
-    AddGUIFunction([this] {ImGui::SliderFloat3("Rot", &ViewRot.x, 0.0f, 3.14f); });
+    AddGUIFunction([this] {ImGui::SliderFloat3("Pos", &CameraTranslation.x, -10.0f, 10.0f); });
+    AddGUIFunction([this] {ImGui::SliderFloat3("Rot", &CameraRotation.x, -3.14f, 3.14f); });
+    AddGUIFunction([this] {ImGui::SliderFloat3("PointLightPos", &WorldLight.Lights[1].Position.x, -10.0f, 10.0f); });
+    AddGUIFunction([this] {ImGui::SliderFloat("SpotPower", &WorldLight.Lights[2].SpotPower, 0.0f, 100.0f); });
     return TRUE;
 }
 
@@ -735,6 +761,7 @@ BOOL EngineBase::Init(HINSTANCE _hInstance, int _Width, int _Height)
     LoadAllTexture();
     CreateSampler();
 
+    SetLight();
     RenderBase::CreateRenderer<BoxRenderer>();
 
     return TRUE;

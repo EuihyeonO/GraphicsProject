@@ -13,6 +13,8 @@ void RenderBase::Init()
     isCallInit = true;
 
     CreateConstantBuffer(EngineBase::GetInstance().GetWorldLight());
+    CreateConstantBuffer(TransFormData);
+    CreateConstantBuffer(MaterialData);
 }
 
 void RenderBase::CreateVertexBuffer()

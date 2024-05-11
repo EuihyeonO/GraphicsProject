@@ -46,6 +46,7 @@ public:
 	void Update(float _DeltaTime);
 	void Render(float _DeltaTime);
 
+	void SetLight();
 	//IMGUI
 public:
 	BOOL ImguiInit();
@@ -129,10 +130,12 @@ public:
 public:
 
 	DirectX::SimpleMath::Matrix ViewMat;
-	DirectX::SimpleMath::Vector3 ViewRot;
+	
+	DirectX::SimpleMath::Vector3 CameraRotation;
+	DirectX::SimpleMath::Vector3 CameraTranslation = { 0.0f, 0.0f, -2.0f };
 
 	DirectX::SimpleMath::Vector3 EyePos = { 0.0f, 0.0f, -1.0f };
-	DirectX::SimpleMath::Vector3 FocusPos = { 0.0f, 0.0f, 1.0f };
+	DirectX::SimpleMath::Vector3 EyeDir = { 0.0f, 0.0f, 1.0f };
 	DirectX::SimpleMath::Vector3 UpDir = { 0.0f, 1.0f, 0.0f };
 
 public:

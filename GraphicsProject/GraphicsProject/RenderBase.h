@@ -119,6 +119,7 @@ protected:
     Microsoft::WRL::ComPtr<ID3D11Buffer> IndexBuffer;
     std::list<ConstantBufferData> ConstantBuffers;
 
+	Material MaterialData;
 	Transform TransFormData;
 
 	std::string Name = "";

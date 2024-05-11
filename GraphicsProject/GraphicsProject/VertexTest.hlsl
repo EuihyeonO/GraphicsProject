@@ -3,16 +3,17 @@
 cbuffer WorldLights : register(b0)
 {
     float3 EyeWorld;
-    float Ambient;
+    float Padding;
     
     Light Lights[LIGHT_NUM];
 };
 
-cbuffer WorldViewProjection : register(b1)
+cbuffer TransformData : register(b1)
 {
     matrix World;
     matrix View;
     matrix Projection;
+    matrix InvTranspose;
 };
 
 struct VertexShaderInput
@@ -44,7 +45,7 @@ PixelShaderInput main(VertexShaderInput _Input)
     Output.TexCoord = _Input.TexCoord;
     
     Output.WorldPos = mul(float4(_Input.pos, 1.0f), World).rgb;
-    Output.WorldNormal = mul(float4(_Input.Normal, 0.0f), World).rgb;
+    Output.WorldNormal = mul(float4(_Input.Normal, 0.0f), InvTranspose).rgb;
     
     return Output;
 }
