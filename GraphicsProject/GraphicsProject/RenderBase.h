@@ -36,7 +36,7 @@ public:
 
 public:
 	virtual void Init();
-	virtual void Render(float _DeltaTime) = 0;
+	virtual void Render(float _DeltaTime);
 	virtual void Update(float _DeltaTime) = 0;
 	
 	void CreateVertexBuffer();
@@ -125,12 +125,10 @@ public:
 		return VertexBuffer;
 	}
 
-
 	Microsoft::WRL::ComPtr<ID3D11Buffer> GetIndexBuffer()
 	{
 		return IndexBuffer;
 	}
-
 
 	const std::unordered_map<std::wstring, std::list<EConstantBufferData>>& GetVSConstantBuffer()
 	{
