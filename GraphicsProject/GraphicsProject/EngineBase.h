@@ -128,7 +128,6 @@ public:
 	}
 
 public:
-
 	DirectX::SimpleMath::Matrix ViewMat;
 	
 	DirectX::SimpleMath::Vector3 CameraRotation;
@@ -139,7 +138,7 @@ public:
 	DirectX::SimpleMath::Vector3 UpDir = { 0.0f, 1.0f, 0.0f };
 
 public:
-	void AddRenderer(std::shared_ptr<class RenderBase> _NewRenderer);
+	void AddRenderer(std::shared_ptr<class Renderer> _NewRenderer);
 
 protected:
 
@@ -147,7 +146,7 @@ protected:
 private:
 	EWorldLight WorldLight;
 
-	std::list<std::shared_ptr<class RenderBase>> Renderers;
+	std::list<std::shared_ptr<class Renderer>> Renderers;
 
 	std::unordered_map<std::wstring, VertexShaderData> VertexShaders;
 	std::unordered_map<std::wstring, Microsoft::WRL::ComPtr<ID3D11PixelShader>> PixelShaders;

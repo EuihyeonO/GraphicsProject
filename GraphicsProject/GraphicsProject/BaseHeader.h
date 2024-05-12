@@ -20,7 +20,6 @@
 #include <d3d11.h>
 #include <wrl.h>
 
-
 struct EVertex
 {
 	DirectX::SimpleMath::Vector3 Position;

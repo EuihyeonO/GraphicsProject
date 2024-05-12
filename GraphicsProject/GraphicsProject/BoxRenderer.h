@@ -1,7 +1,7 @@
 #pragma once
-#include "RenderBase.h"
+#include "Renderer.h"
 
-class BoxRenderer : public RenderBase
+class BoxRenderer : public Renderer
 {
 
 public:
@@ -16,7 +16,7 @@ public:
 
 public:
 	virtual void Init() override;
-	virtual void Update(float _DeltaTime) override;
+	void Update(float _DeltaTime);
 protected:
 
 private:

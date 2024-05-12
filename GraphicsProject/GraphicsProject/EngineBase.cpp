@@ -1,4 +1,6 @@
 #include "EngineBase.h"
+#include "Renderer.h"
+
 #include "BoxRenderer.h"
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -170,7 +172,7 @@ void EngineBase::LoadAllTexture()
 
 void EngineBase::Update(float _DeltaTime)
 {
-    for (std::shared_ptr<RenderBase> Renderer : Renderers)
+    for (std::shared_ptr<Renderer> Renderer : Renderers)
     {
         Renderer->Update(_DeltaTime);
     }
@@ -195,7 +197,7 @@ void EngineBase::Render(float _DeltaTime)
         Context->RSSetState(WireRasterizerState.Get());
     }
 
-    for (std::shared_ptr<RenderBase> Renderer : Renderers)
+    for (std::shared_ptr<Renderer> Renderer : Renderers)
     {
         Renderer->Render(_DeltaTime);
     }
@@ -584,7 +586,7 @@ BOOL EngineBase::CreatePixelShader(const std::wstring& _ShaderFileName)
     return TRUE;
 }
 
-void EngineBase::AddRenderer(std::shared_ptr<class RenderBase> _NewRenderer)
+void EngineBase::AddRenderer(std::shared_ptr<Renderer> _NewRenderer)
 {
     Renderers.push_back(_NewRenderer);
 }

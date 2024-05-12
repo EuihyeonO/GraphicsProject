@@ -440,6 +440,9 @@
     <ClInclude Include="ResourceLoader.h">
       <Filter>Public\Engine\Loader</Filter>
     </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Public\Engine\Render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\DirectXTK\SimpleMath.inl">
@@ -515,6 +518,9 @@
     </ClCompile>
     <ClCompile Include="ResourceLoader.cpp">
       <Filter>Private\Engine\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Private\Engine\Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

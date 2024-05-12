@@ -1,4 +1,5 @@
 #include "RenderBase.h"
+#include "Renderer.h"
 
 RenderBase::RenderBase()
 {
@@ -8,52 +9,8 @@ RenderBase::~RenderBase()
 {
 }
 
-void RenderBase::Init()
-{
-    isCallInit = true;
-
-    CreateConstantBuffer(EShaderType::PSShader, L"PixelTest.hlsl", EngineBase::GetInstance().GetWorldLight());
-    CreateConstantBuffer(EShaderType::PSShader, L"PixelTest.hlsl", MaterialData);
-
-    CreateConstantBuffer(EShaderType::VSShader, L"VertexTest.hlsl", TransFormData);
-}
-
 void RenderBase::Render(float _DeltaTime)
 {
-    UINT Stride = sizeof(EVertex);
-    UINT Offset = 0;
-
-    VertexShaderData VSData = EngineBase::GetInstance().GetVertexShaderData(VSShader);
-    Microsoft::WRL::ComPtr<ID3D11PixelShader> PS = EngineBase::GetInstance().GetPixelShaderData(PSShader);
-
-    EngineBase::GetInstance().GetContext()->IASetVertexBuffers(0, 1, VertexBuffer.GetAddressOf(), &Stride, &Offset);
-    EngineBase::GetInstance().GetContext()->IASetIndexBuffer(IndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
-    EngineBase::GetInstance().GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    EngineBase::GetInstance().GetContext()->VSSetShader(VSData.VertexShader.Get(), 0, 0);
-    EngineBase::GetInstance().GetContext()->IASetInputLayout(VSData.InputLayout.Get());
-    EngineBase::GetInstance().GetContext()->PSSetShader(PS.Get(), 0, 0);
-
-    //추후 텍스쳐 여러개 세팅할 수도 있다.
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> SRV = EngineBase::GetInstance().GetTextureData(MeshData.TextureName).ShaderResourceView;
-    Microsoft::WRL::ComPtr<ID3D11SamplerState> Sampler = EngineBase::GetInstance().GetSampler(SamplerName);
-
-    EngineBase::GetInstance().GetContext()->PSSetShaderResources(0, 1, SRV.GetAddressOf());
-    EngineBase::GetInstance().GetContext()->PSSetSamplers(0, 1, Sampler.GetAddressOf());
-
-    int Index = 0;
-    for (const EConstantBufferData& _Data : VSConstantBuffers[VSShader])
-    {
-        EngineBase::GetInstance().GetContext()->VSSetConstantBuffers(Index, 1, _Data.ConstantBuffer.GetAddressOf());
-        Index++;
-    }
-
-    Index = 0;
-    for (const EConstantBufferData& _Data : PSConstantBuffers[PSShader])
-    {
-        EngineBase::GetInstance().GetContext()->PSSetConstantBuffers(Index, 1, _Data.ConstantBuffer.GetAddressOf());
-        Index++;
-    }
-
     UINT IndexCount = (UINT)MeshData.Indices.size();
     EngineBase::GetInstance().GetContext()->DrawIndexed(IndexCount, 0, 0);
 }
@@ -79,7 +36,8 @@ void RenderBase::CreateVertexBuffer()
 
     if (Result != S_OK) 
     {
-        std::cout << Name << " :" << "CreateVertexBuffer() failed." << std::hex << "\nResult : " << Result  << std::endl;
+        std::string Name = (Owner == nullptr) ? "None" : Owner->Name;
+        std::cout << Name << " :" << "CreateVertexBuffer() failed." << std::hex << "\nResult : " << Result << std::endl;
     };
 }
 
@@ -102,8 +60,32 @@ void RenderBase::CreateIndexBuffer()
 
     if (Result != S_OK)
     {
+        std::string Name = (Owner == nullptr) ? "None" : Owner->Name;
         std::cout << Name << " :" << "CreateIndexBuffer() failed." << std::hex << "\nResult : " << Result << std::endl;
     };
+}
+
+void RenderBase::RenderSetting()
+{
+    UINT Stride = sizeof(EVertex);
+    UINT Offset = 0;
+
+    VertexShaderData VSData = EngineBase::GetInstance().GetVertexShaderData(VSShader);
+    Microsoft::WRL::ComPtr<ID3D11PixelShader> PS = EngineBase::GetInstance().GetPixelShaderData(PSShader);
+
+    EngineBase::GetInstance().GetContext()->IASetVertexBuffers(0, 1, VertexBuffer.GetAddressOf(), &Stride, &Offset);
+    EngineBase::GetInstance().GetContext()->IASetIndexBuffer(IndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+    EngineBase::GetInstance().GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    EngineBase::GetInstance().GetContext()->VSSetShader(VSData.VertexShader.Get(), 0, 0);
+    EngineBase::GetInstance().GetContext()->IASetInputLayout(VSData.InputLayout.Get());
+    EngineBase::GetInstance().GetContext()->PSSetShader(PS.Get(), 0, 0);
+
+    //추후 텍스쳐 여러개 세팅할 수도 있다.
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> SRV = EngineBase::GetInstance().GetTextureData(MeshData.TextureName).ShaderResourceView;
+    Microsoft::WRL::ComPtr<ID3D11SamplerState> Sampler = EngineBase::GetInstance().GetSampler(SamplerName);
+
+    EngineBase::GetInstance().GetContext()->PSSetShaderResources(0, 1, SRV.GetAddressOf());
+    EngineBase::GetInstance().GetContext()->PSSetSamplers(0, 1, Sampler.GetAddressOf());
 }
 
 

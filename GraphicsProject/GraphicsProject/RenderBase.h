@@ -35,58 +35,15 @@ public:
 	RenderBase& operator=(RenderBase&& _Other) noexcept = delete;
 
 public:
-	virtual void Init();
-	virtual void Render(float _DeltaTime);
-	virtual void Update(float _DeltaTime) = 0;
+	void Render(float _DeltaTime);
 	
 	void CreateVertexBuffer();
 	void CreateIndexBuffer();
 
-	template <typename DataType>
-	void CreateConstantBuffer(EShaderType _ShaderType, const std::wstring& _ShaderName, DataType& _Data)
-	{
-		D3D11_BUFFER_DESC CBDesc;
-		CBDesc.ByteWidth = sizeof(DataType);
-		CBDesc.Usage = D3D11_USAGE_DYNAMIC;
-		CBDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		CBDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		CBDesc.MiscFlags = 0;
-		CBDesc.StructureByteStride = 0;
-
-		D3D11_SUBRESOURCE_DATA InitData;
-		InitData.pSysMem = &_Data;
-		InitData.SysMemPitch = 0;
-		InitData.SysMemSlicePitch = 0;
-
-		Microsoft::WRL::ComPtr<ID3D11Buffer> NewBuffer;
-
-		HRESULT Result =
-			EngineBase::GetInstance().GetDevice()->CreateBuffer(&CBDesc, &InitData, NewBuffer.GetAddressOf());
-
-		if (Result != S_OK)
-		{
-			std::cout << Name << " :" << "CreateConstantBuffer() failed." << std::hex << "\nResult : " << Result << std::endl;
-		};
-
-		EConstantBufferData NewBufferData;
-		NewBufferData.ConstantBuffer = NewBuffer;
-		NewBufferData.Data = reinterpret_cast<void*>(&_Data);
-		NewBufferData.DataSize = sizeof(_Data);
-
-		if (_ShaderType == EShaderType::VSShader)
-		{
-			VSConstantBuffers[_ShaderName].push_back(NewBufferData);
-		}
-		else if (_ShaderType == EShaderType::PSShader)
-		{
-			PSConstantBuffers[_ShaderName].push_back(NewBufferData);
-		}
-	}
-
 	template <typename T>
 	static std::shared_ptr<T> CreateRenderer()
 	{
-		std::shared_ptr<class RenderBase> NewRenderer = std::make_shared<T>();
+		std::shared_ptr<class Renderer> NewRenderer = std::make_shared<T>();
 		NewRenderer->Init();
 
 		if (NewRenderer->isCallInitFunction() == false)
@@ -98,6 +55,8 @@ public:
 
 		return std::dynamic_pointer_cast<T>(NewRenderer);
 	}
+
+	void RenderSetting();
 
 	void SetTexture(const std::string& _TextureName)
 	{
@@ -130,35 +89,29 @@ public:
 		return IndexBuffer;
 	}
 
-	const std::unordered_map<std::wstring, std::list<EConstantBufferData>>& GetVSConstantBuffer()
+
+
+	const std::wstring& GetVSShaderName()
 	{
-		return VSConstantBuffers;
+		return VSShader;
 	}
 
-	const std::unordered_map<std::wstring, std::list<EConstantBufferData>>& GetPSConstantBuffer()
+	const std::wstring& GetPSShaderName()
 	{
-		return PSConstantBuffers;
+		return PSShader;
 	}
-
-	bool isCallInitFunction()
+	
+	EMeshData& GetMeshData()
 	{
-		return isCallInit;
+		return MeshData;
 	}
 
 protected:
-
 	EMeshData MeshData;
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> VertexBuffer;
     Microsoft::WRL::ComPtr<ID3D11Buffer> IndexBuffer;
 
-	std::unordered_map<std::wstring, std::list<EConstantBufferData>> VSConstantBuffers;
-	std::unordered_map<std::wstring, std::list<EConstantBufferData>> PSConstantBuffers;
-
-	EMaterial MaterialData;
-	ETransform TransFormData;
-
-	std::string Name = "";
 
 	std::wstring VSShader = L"";
 	std::wstring PSShader = L"";
@@ -166,6 +119,7 @@ protected:
 	std::string SamplerName = "";
 
 private:
-	bool isCallInit = false;
+
+	std::shared_ptr<class Renderer> Owner = nullptr;
 };
 
