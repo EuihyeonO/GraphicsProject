@@ -184,7 +184,15 @@ void EngineBase::Render(float _DeltaTime)
 
     Context->OMSetRenderTargets(1, RenderTargetView.GetAddressOf(), DepthStencilView.Get());
     Context->OMSetDepthStencilState(DepthStencilState.Get(), 0);
-    Context->RSSetState(RasterizerState.Get());
+    
+    if (isWireFrame == false)
+    {
+        Context->RSSetState(SolidRasterizerState.Get());
+    }
+    else
+    {
+        Context->RSSetState(WireRasterizerState.Get());
+    }
 
     for (std::shared_ptr<RenderBase> Renderer : Renderers)
     {
@@ -229,10 +237,13 @@ BOOL EngineBase::ImguiInit()
         return FALSE;
     }
 
+    AddGUIFunction([this] {ImGui::Checkbox("WireFrame",&isWireFrame);});
+
     AddGUIFunction([this] {ImGui::SliderFloat3("Pos", &CameraTranslation.x, -10.0f, 10.0f); });
     AddGUIFunction([this] {ImGui::SliderFloat3("Rot", &CameraRotation.x, -3.14f, 3.14f); });
     AddGUIFunction([this] {ImGui::SliderFloat3("PointLightPos", &WorldLight.Lights[1].Position.x, -10.0f, 10.0f); });
     AddGUIFunction([this] {ImGui::SliderFloat("SpotPower", &WorldLight.Lights[2].SpotPower, 0.0f, 100.0f); });
+
     return TRUE;
 }
 
@@ -417,16 +428,32 @@ void EngineBase::SetViewport()
 
 BOOL EngineBase::CreateRasterizerState()
 {
-    D3D11_RASTERIZER_DESC RD;
-    ZeroMemory(&RD, sizeof(D3D11_RASTERIZER_DESC));
-    RD.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
-    RD.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
-    RD.FrontCounterClockwise = false;
-
-    HRESULT Result = Device->CreateRasterizerState(&RD, &RasterizerState);
-    if (Result != S_OK)
     {
-        return FALSE;
+        D3D11_RASTERIZER_DESC RD;
+        ZeroMemory(&RD, sizeof(D3D11_RASTERIZER_DESC));
+        RD.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+        RD.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
+        RD.FrontCounterClockwise = false;
+
+        HRESULT Result = Device->CreateRasterizerState(&RD, &SolidRasterizerState);
+        if (Result != S_OK)
+        {
+            return FALSE;
+        }
+    }
+
+    {
+        D3D11_RASTERIZER_DESC RD;
+        ZeroMemory(&RD, sizeof(D3D11_RASTERIZER_DESC));
+        RD.FillMode = D3D11_FILL_MODE::D3D11_FILL_WIREFRAME;
+        RD.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
+        RD.FrontCounterClockwise = false;
+
+        HRESULT Result = Device->CreateRasterizerState(&RD, &WireRasterizerState);
+        if (Result != S_OK)
+        {
+            return FALSE;
+        }
     }
     
     return TRUE;

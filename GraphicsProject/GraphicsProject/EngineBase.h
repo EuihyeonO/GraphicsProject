@@ -164,13 +164,16 @@ private:
 	MSG msg;
 	HWND hWnd;
 private:
+	bool isWireFrame = false;
 
 	Microsoft::WRL::ComPtr<ID3D11Device> Device;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> Context;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> SwapChain;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> RenderTargetView;
 
-	Microsoft::WRL::ComPtr<ID3D11RasterizerState>RasterizerState;
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState> SolidRasterizerState;
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState> WireRasterizerState;
+
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> DepthStencilBuffer;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> DepthStencilView;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> DepthStencilState;
