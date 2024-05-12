@@ -1,14 +1,6 @@
 #include "LightHeader.hlsli"
 
-cbuffer WorldLights : register(b0)
-{
-    float3 EyeWorld;
-    float Padding;
-    
-    Light Lights[LIGHT_NUM];
-};
-
-cbuffer TransformData : register(b1)
+cbuffer TransformData : register(b0)
 {
     matrix World;
     matrix View;

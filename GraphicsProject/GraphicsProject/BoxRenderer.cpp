@@ -11,11 +11,11 @@ BoxRenderer::~BoxRenderer()
 
 void BoxRenderer::Render(float _DeltaTime)
 {
-    UINT Stride = sizeof(Vertex);
+    UINT Stride = sizeof(EVertex);
     UINT Offset = 0;
     
-    VertexShaderData VSData = EngineBase::GetInstance().GetVertexShaderData(L"VertexTest.hlsl");
-    Microsoft::WRL::ComPtr<ID3D11PixelShader> PS = EngineBase::GetInstance().GetPixelShaderData(L"PixelTest.hlsl");
+    VertexShaderData VSData = EngineBase::GetInstance().GetVertexShaderData(VSShader);
+    Microsoft::WRL::ComPtr<ID3D11PixelShader> PS = EngineBase::GetInstance().GetPixelShaderData(PSShader);
 
     EngineBase::GetInstance().GetContext()->IASetVertexBuffers(0, 1, VertexBuffer.GetAddressOf(), &Stride, &Offset);
     EngineBase::GetInstance().GetContext()->IASetIndexBuffer(IndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
@@ -25,21 +25,27 @@ void BoxRenderer::Render(float _DeltaTime)
     EngineBase::GetInstance().GetContext()->PSSetShader(PS.Get(), 0, 0);
 
     //추후 텍스쳐 여러개 세팅할 수도 있다.
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> SRV = EngineBase::GetInstance().GetTextureData(TextureName).ShaderResourceView;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> SRV = EngineBase::GetInstance().GetTextureData(MeshData.TextureName).ShaderResourceView;
     Microsoft::WRL::ComPtr<ID3D11SamplerState> Sampler = EngineBase::GetInstance().GetSampler(SamplerName);
     
     EngineBase::GetInstance().GetContext()->PSSetShaderResources(0, 1, SRV.GetAddressOf());
     EngineBase::GetInstance().GetContext()->PSSetSamplers(0, 1, Sampler.GetAddressOf());
 
     int Index = 0;
-    for (const ConstantBufferData& _Data : ConstantBuffers)
+    for (const EConstantBufferData& _Data : VSConstantBuffers[VSShader])
     {
         EngineBase::GetInstance().GetContext()->VSSetConstantBuffers(Index, 1, _Data.ConstantBuffer.GetAddressOf());
+        Index++;
+    }
+
+    Index = 0;
+    for (const EConstantBufferData& _Data : PSConstantBuffers[PSShader])
+    {
         EngineBase::GetInstance().GetContext()->PSSetConstantBuffers(Index, 1, _Data.ConstantBuffer.GetAddressOf());
         Index++;
     }
-    
-    UINT IndexCount = (UINT)Indices.size();
+
+    UINT IndexCount = (UINT)MeshData.Indices.size();
     EngineBase::GetInstance().GetContext()->DrawIndexed(IndexCount, 0, 0);
 }
 
@@ -51,6 +57,9 @@ void BoxRenderer::Init()
     
     RenderBase::CreateVertexBuffer();
     RenderBase::CreateIndexBuffer();
+
+    SetVSShader(L"VertexTest.hlsl");
+    SetPSShader(L"PixelTest.hlsl");
 
     SetTexture("BoxTexture.png");
     SetSampler("LINEARWRAP");
@@ -78,13 +87,32 @@ void BoxRenderer::Update(float _DeltaTime)
     TransFormData.InvTranspose.Translation({ 0.0f, 0.0f, 0.0f });
     TransFormData.InvTranspose = TransFormData.InvTranspose.Transpose().Invert();
 
-    for (const ConstantBufferData& _Data : ConstantBuffers)
+    for (const std::pair<std::wstring, std::list<EConstantBufferData>>& _DataPair : VSConstantBuffers)
     {
-        D3D11_MAPPED_SUBRESOURCE Ms;
-        
-        EngineBase::GetInstance().GetContext()->Map(_Data.ConstantBuffer.Get(), NULL, D3D11_MAP_WRITE_DISCARD, NULL, &Ms);
-        memcpy(Ms.pData, _Data.Data, _Data.DataSize);
-        EngineBase::GetInstance().GetContext()->Unmap(_Data.ConstantBuffer.Get(), NULL);
+        const std::list<EConstantBufferData>& DataList = _DataPair.second;
+
+        for (const EConstantBufferData& _Data : DataList)
+        {
+            D3D11_MAPPED_SUBRESOURCE Ms;
+
+            EngineBase::GetInstance().GetContext()->Map(_Data.ConstantBuffer.Get(), NULL, D3D11_MAP_WRITE_DISCARD, NULL, &Ms);
+            memcpy(Ms.pData, _Data.Data, _Data.DataSize);
+            EngineBase::GetInstance().GetContext()->Unmap(_Data.ConstantBuffer.Get(), NULL);
+        }
+    }
+
+    for (const std::pair<std::wstring, std::list<EConstantBufferData>>& _DataPair : PSConstantBuffers)
+    {
+        const std::list<EConstantBufferData>& DataList = _DataPair.second;
+
+        for (const EConstantBufferData& _Data : DataList)
+        {
+            D3D11_MAPPED_SUBRESOURCE Ms;
+
+            EngineBase::GetInstance().GetContext()->Map(_Data.ConstantBuffer.Get(), NULL, D3D11_MAP_WRITE_DISCARD, NULL, &Ms);
+            memcpy(Ms.pData, _Data.Data, _Data.DataSize);
+            EngineBase::GetInstance().GetContext()->Unmap(_Data.ConstantBuffer.Get(), NULL);
+        }
     }
 }
 
@@ -197,15 +225,15 @@ void BoxRenderer::CreateVertexAndIndex()
 
     for (size_t i = 0; i < 24; i++) 
     {
-        Vertex NewVertex;
+        EVertex NewVertex;
         NewVertex.Position = Positions[i];
         NewVertex.Normal = Normals[i];
         NewVertex.TexCoord = TexCoords[i];
 
-        Vertices.push_back(NewVertex);
+        MeshData.Vertices.push_back(NewVertex);
     }
 
-    Indices = { 0, 1, 2,
+    MeshData.Indices = { 0, 1, 2,
                 0, 2, 3,
                 4, 6, 5,
                 4, 7, 6,

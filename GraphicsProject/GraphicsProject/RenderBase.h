@@ -1,12 +1,25 @@
 #pragma once
 #include "EngineBase.h"
 
-struct ConstantBufferData
+enum class EShaderType
+{
+	VSShader,
+	PSShader,
+};
+
+struct EConstantBufferData
 {
 	Microsoft::WRL::ComPtr<ID3D11Buffer> ConstantBuffer;
 	
 	void* Data = nullptr;
 	UINT DataSize = 0;
+};
+
+struct EMeshData
+{
+	std::vector<struct EVertex> Vertices;
+	std::vector<uint16_t> Indices;
+	std::string TextureName = "";
 };
 
 class RenderBase
@@ -30,7 +43,7 @@ public:
 	void CreateIndexBuffer();
 
 	template <typename DataType>
-	void CreateConstantBuffer(DataType& _Data)
+	void CreateConstantBuffer(EShaderType _ShaderType, const std::wstring& _ShaderName, DataType& _Data)
 	{
 		D3D11_BUFFER_DESC CBDesc;
 		CBDesc.ByteWidth = sizeof(DataType);
@@ -55,12 +68,19 @@ public:
 			std::cout << Name << " :" << "CreateConstantBuffer() failed." << std::hex << "\nResult : " << Result << std::endl;
 		};
 
-		ConstantBufferData NewBufferData;
+		EConstantBufferData NewBufferData;
 		NewBufferData.ConstantBuffer = NewBuffer;
 		NewBufferData.Data = reinterpret_cast<void*>(&_Data);
 		NewBufferData.DataSize = sizeof(_Data);
 
-		ConstantBuffers.push_back(NewBufferData);
+		if (_ShaderType == EShaderType::VSShader)
+		{
+			VSConstantBuffers[_ShaderName].push_back(NewBufferData);
+		}
+		else if (_ShaderType == EShaderType::PSShader)
+		{
+			PSConstantBuffers[_ShaderName].push_back(NewBufferData);
+		}
 	}
 
 	template <typename T>
@@ -81,12 +101,23 @@ public:
 
 	void SetTexture(const std::string& _TextureName)
 	{
-		TextureName = _TextureName;
+		MeshData.TextureName = _TextureName;
 	}
 
 	void SetSampler(const std::string& _SamplerName)
 	{
 		SamplerName = _SamplerName;
+	}
+
+
+	void SetVSShader(const std::wstring& _VSShaderName)
+	{
+		VSShader = _VSShaderName;
+	}
+
+	void SetPSShader(const std::wstring& _PSShaderName)
+	{
+		PSShader = _PSShaderName;
 	}
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> GetBertexBuffer()
@@ -101,9 +132,14 @@ public:
 	}
 
 
-	const std::list<ConstantBufferData>& GetConstantBuffer()
+	const std::unordered_map<std::wstring, std::list<EConstantBufferData>>& GetVSConstantBuffer()
 	{
-		return ConstantBuffers;
+		return VSConstantBuffers;
+	}
+
+	const std::unordered_map<std::wstring, std::list<EConstantBufferData>>& GetPSConstantBuffer()
+	{
+		return PSConstantBuffers;
 	}
 
 	bool isCallInitFunction()
@@ -112,19 +148,23 @@ public:
 	}
 
 protected:
-	std::vector<struct Vertex> Vertices;
-	std::vector<uint16_t> Indices;
+
+	EMeshData MeshData;
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> VertexBuffer;
     Microsoft::WRL::ComPtr<ID3D11Buffer> IndexBuffer;
-    std::list<ConstantBufferData> ConstantBuffers;
 
-	Material MaterialData;
-	Transform TransFormData;
+	std::unordered_map<std::wstring, std::list<EConstantBufferData>> VSConstantBuffers;
+	std::unordered_map<std::wstring, std::list<EConstantBufferData>> PSConstantBuffers;
+
+	EMaterial MaterialData;
+	ETransform TransFormData;
 
 	std::string Name = "";
 
-	std::string TextureName = "";
+	std::wstring VSShader = L"";
+	std::wstring PSShader = L"";
+
 	std::string SamplerName = "";
 
 private:

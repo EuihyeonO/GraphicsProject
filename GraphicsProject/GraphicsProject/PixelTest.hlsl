@@ -8,7 +8,7 @@ cbuffer WorldLightBuffer : register(b0)
     Light Lights[LIGHT_NUM];
 };
 
-cbuffer MaterialBuffer : register(b2)
+cbuffer MaterialBuffer : register(b1)
 {
     Material MaterialData;
 };

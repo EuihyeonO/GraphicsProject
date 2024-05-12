@@ -12,9 +12,10 @@ void RenderBase::Init()
 {
     isCallInit = true;
 
-    CreateConstantBuffer(EngineBase::GetInstance().GetWorldLight());
-    CreateConstantBuffer(TransFormData);
-    CreateConstantBuffer(MaterialData);
+    CreateConstantBuffer(EShaderType::PSShader, L"PixelTest.hlsl", EngineBase::GetInstance().GetWorldLight());
+    CreateConstantBuffer(EShaderType::PSShader, L"PixelTest.hlsl", MaterialData);
+
+    CreateConstantBuffer(EShaderType::VSShader, L"VertexTest.hlsl", TransFormData);
 }
 
 void RenderBase::CreateVertexBuffer()
@@ -23,13 +24,13 @@ void RenderBase::CreateVertexBuffer()
     ZeroMemory(&BufferDesc, sizeof(BufferDesc));
 
     BufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-    BufferDesc.ByteWidth = UINT(sizeof(Vertex) * Vertices.size());
+    BufferDesc.ByteWidth = UINT(sizeof(EVertex) * MeshData.Vertices.size());
     BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     BufferDesc.CPUAccessFlags = 0;
-    BufferDesc.StructureByteStride = sizeof(Vertex);
+    BufferDesc.StructureByteStride = sizeof(EVertex);
 
     D3D11_SUBRESOURCE_DATA VertexBufferData = { 0, }; 
-    VertexBufferData.pSysMem = Vertices.data();
+    VertexBufferData.pSysMem = MeshData.Vertices.data();
     VertexBufferData.SysMemPitch = 0;
     VertexBufferData.SysMemSlicePitch = 0;
 
@@ -46,13 +47,13 @@ void RenderBase::CreateIndexBuffer()
 {
     D3D11_BUFFER_DESC BufferDesc = {0, };
     BufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-    BufferDesc.ByteWidth = UINT(sizeof(uint16_t) * Indices.size());
+    BufferDesc.ByteWidth = UINT(sizeof(uint16_t) * MeshData.Indices.size());
     BufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
     BufferDesc.CPUAccessFlags = 0;
     BufferDesc.StructureByteStride = sizeof(uint16_t);
 
     D3D11_SUBRESOURCE_DATA IndexBufferData = { 0 };
-    IndexBufferData.pSysMem = Indices.data();
+    IndexBufferData.pSysMem = MeshData.Indices.data();
     IndexBufferData.SysMemPitch = 0;
     IndexBufferData.SysMemSlicePitch = 0;
 

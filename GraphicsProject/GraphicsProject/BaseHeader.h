@@ -21,14 +21,14 @@
 #include <wrl.h>
 
 
-struct Vertex
+struct EVertex
 {
 	DirectX::SimpleMath::Vector3 Position;
 	DirectX::SimpleMath::Vector3 Normal;
 	DirectX::SimpleMath::Vector2 TexCoord;
 };
 
-struct Transform
+struct ETransform
 {
 	DirectX::SimpleMath::Matrix WorldMatrix = DirectX::SimpleMath::Matrix();
 	DirectX::SimpleMath::Matrix ViewMAtrix = DirectX::SimpleMath::Matrix();
@@ -36,7 +36,7 @@ struct Transform
 	DirectX::SimpleMath::Matrix InvTranspose = DirectX::SimpleMath::Matrix();
 };
 
-struct Light
+struct ELight
 {
 	DirectX::SimpleMath::Vector3 Strength = { 1.0f, 1.0f, 1.0f };
 	float FallOffStart = 1.0f;
@@ -48,7 +48,7 @@ struct Light
 	float SpotPower = 1.0f;
 };
 
-struct Material
+struct EMaterial
 {
 	DirectX::SimpleMath::Vector3 Ambient = { 0.1f, 0.1f, 0.1f };
 	float Shininess = 50.0f;
@@ -62,10 +62,10 @@ struct Material
 
 #define LIGHT_NUM 3
 
-struct LightCBuffer
+struct EWorldLight
 {
 	DirectX::SimpleMath::Vector3 EyeWorld;
 	float Padding = 0.0f;
 
-	Light Lights[LIGHT_NUM];
+	ELight Lights[LIGHT_NUM];
 };

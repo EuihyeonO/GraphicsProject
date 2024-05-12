@@ -66,6 +66,12 @@
     <Filter Include="Public\Library\Assimp">
       <UniqueIdentifier>{14f7832c-c260-44ba-b1e7-f44ce26a8a3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Private\Engine\Loader">
+      <UniqueIdentifier>{de8a984b-52cb-4870-80e6-8b27424a9abf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Engine\Loader">
+      <UniqueIdentifier>{ac949a5b-61f3-4ef9-8a9a-10eca00b3ba6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -431,6 +437,9 @@
     <ClInclude Include="..\Assimp\Compiler\pushpack1.h">
       <Filter>Public\Library\Assimp</Filter>
     </ClInclude>
+    <ClInclude Include="ResourceLoader.h">
+      <Filter>Public\Engine\Loader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\DirectXTK\SimpleMath.inl">
@@ -503,6 +512,9 @@
     </ClCompile>
     <ClCompile Include="..\IMGUI\imgui_demo.cpp">
       <Filter>Public\Library\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceLoader.cpp">
+      <Filter>Private\Engine\Loader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

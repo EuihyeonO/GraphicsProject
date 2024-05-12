@@ -122,7 +122,7 @@ public:
 		return Samplers[_SamplerName];
 	}
 
-	LightCBuffer& GetWorldLight()
+	EWorldLight& GetWorldLight()
 	{
 		return WorldLight;
 	}
@@ -145,7 +145,7 @@ protected:
 
 
 private:
-	LightCBuffer WorldLight;
+	EWorldLight WorldLight;
 
 	std::list<std::shared_ptr<class RenderBase>> Renderers;
 
