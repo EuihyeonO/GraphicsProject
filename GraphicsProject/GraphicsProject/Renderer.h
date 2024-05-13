@@ -73,6 +73,28 @@ public:
 		RenderUnits.push_back(_Unit);
 	}
 
+	void SetVSShader(const std::wstring& _Shadername);
+	void SetPSShader(const std::wstring& _Shadername);
+	void SetSampler(const std::string& _Sampler);
+
+	void SetModel(const std::string& _Name);
+
+	template <typename T>
+	static std::shared_ptr<T> CreateRenderer()
+	{
+		std::shared_ptr<class Renderer> NewRenderer = std::make_shared<T>();
+		NewRenderer->Init();
+
+		if (NewRenderer->isCallInitFunction() == false)
+		{
+			std::cout << NewRenderer->Name << " : NewRenderer::Init() is not called. " << std::endl;
+		}
+
+		EngineBase::GetInstance().AddRenderer(NewRenderer);
+
+		return std::dynamic_pointer_cast<T>(NewRenderer);
+	}
+
 	std::string Name = "";
 protected:
 

@@ -15,13 +15,6 @@ struct EConstantBufferData
 	UINT DataSize = 0;
 };
 
-struct EMeshData
-{
-	std::vector<struct EVertex> Vertices;
-	std::vector<uint16_t> Indices;
-	std::string TextureName = "";
-};
-
 class RenderBase
 {
 
@@ -35,33 +28,14 @@ public:
 	RenderBase& operator=(RenderBase&& _Other) noexcept = delete;
 
 public:
+	void CreateBuffer();
+
 	void Render(float _DeltaTime);
 	
 	void CreateVertexBuffer();
 	void CreateIndexBuffer();
 
-	template <typename T>
-	static std::shared_ptr<T> CreateRenderer()
-	{
-		std::shared_ptr<class Renderer> NewRenderer = std::make_shared<T>();
-		NewRenderer->Init();
-
-		if (NewRenderer->isCallInitFunction() == false)
-		{
-			std::cout << NewRenderer->Name << " : RenderBase::Init() is not called. " << std::endl;
-		}
-
-		EngineBase::GetInstance().AddRenderer(NewRenderer);
-
-		return std::dynamic_pointer_cast<T>(NewRenderer);
-	}
-
 	void RenderSetting();
-
-	void SetTexture(const std::string& _TextureName)
-	{
-		MeshData.TextureName = _TextureName;
-	}
 
 	void SetSampler(const std::string& _SamplerName)
 	{
@@ -89,8 +63,6 @@ public:
 		return IndexBuffer;
 	}
 
-
-
 	const std::wstring& GetVSShaderName()
 	{
 		return VSShader;
@@ -106,12 +78,16 @@ public:
 		return MeshData;
 	}
 
+	void SetMesh(const EMeshData& _Mesh)
+	{
+		MeshData = _Mesh;
+	}
+
 protected:
 	EMeshData MeshData;
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> VertexBuffer;
     Microsoft::WRL::ComPtr<ID3D11Buffer> IndexBuffer;
-
 
 	std::wstring VSShader = L"";
 	std::wstring PSShader = L"";
@@ -119,7 +95,6 @@ protected:
 	std::string SamplerName = "";
 
 private:
-
 	std::shared_ptr<class Renderer> Owner = nullptr;
 };
 

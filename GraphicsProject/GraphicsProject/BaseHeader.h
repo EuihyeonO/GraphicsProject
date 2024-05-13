@@ -59,6 +59,19 @@ struct EMaterial
 	float Padding2;
 };
 
+struct TextureData
+{
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> Texture;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> ShaderResourceView;
+};
+
+struct EMeshData
+{
+	std::vector<struct EVertex> Vertices;
+	std::vector<uint32_t> Indices;
+	std::string TextureName = "";
+};
+
 #define LIGHT_NUM 3
 
 struct EWorldLight

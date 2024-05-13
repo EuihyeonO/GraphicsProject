@@ -1,14 +1,11 @@
 #include "EngineBase.h"
 #include "Renderer.h"
+#include "ResourceManager.h"
 
 #include "BoxRenderer.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
-#pragma comment (lib, "assimp-vc143-mtd.lib")
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -167,7 +164,7 @@ void EngineBase::CreateAllShader()
 
 void EngineBase::LoadAllTexture()
 {
-    EngineBase::GetInstance().LoadTexture("BoxTexture.png");
+    ResourceManager::LoadTexture("BoxTexture.png");
 }
 
 void EngineBase::Update(float _DeltaTime)
@@ -180,7 +177,7 @@ void EngineBase::Update(float _DeltaTime)
 
 void EngineBase::Render(float _DeltaTime)
 {
-    float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    float clearColor[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
     Context->ClearRenderTargetView(RenderTargetView.Get(), clearColor);
     Context->ClearDepthStencilView(DepthStencilView.Get(),
         D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -705,68 +702,6 @@ BOOL EngineBase::CreateSampler()
     return TRUE;
 }
 
-BOOL EngineBase::LoadTexture(const std::string& _TextureName)
-{
-    std::string Path = "../Texture/";
-    Path += _TextureName;
-
-    int Width = 0;
-    int Height = 0;
-    int Channels = 0;
-
-    unsigned char* LoadedImage = stbi_load(Path.c_str(), &Width, &Height, &Channels, 0);
-    if (LoadedImage == nullptr)
-    {
-        std::cout << "Image Load Failed" << std::endl;
-        return FALSE;
-    }
-
-    std::vector<uint8_t> Image;
-
-    Image.resize(Width * Height * Channels);
-    memcpy(Image.data(), LoadedImage, Image.size() * sizeof(uint8_t));
-
-    Microsoft::WRL::ComPtr<ID3D11Texture2D> Texture;
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> SRV;
-
-    D3D11_TEXTURE2D_DESC TexDesc = {};
-    TexDesc.Width = Width;
-    TexDesc.Height = Height;
-    TexDesc.MipLevels = TexDesc.ArraySize = 1;
-    TexDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    TexDesc.SampleDesc.Count = 1;
-    TexDesc.Usage = D3D11_USAGE_IMMUTABLE;
-    TexDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-
-    D3D11_SUBRESOURCE_DATA InitData;
-    InitData.pSysMem = Image.data();
-    InitData.SysMemPitch = TexDesc.Width * sizeof(uint8_t) * Channels;
-
-    HRESULT Result = EngineBase::GetInstance().GetDevice()->CreateTexture2D(&TexDesc, &InitData, Texture.GetAddressOf());
-    if (Result != S_OK)
-    {
-        std::cout << "CreateTexture2D failed " << std::endl;
-        return FALSE;
-    }
-
-    Result = EngineBase::GetInstance().GetDevice()->CreateShaderResourceView(Texture.Get(), nullptr, SRV.GetAddressOf());
-    if (Result != S_OK)
-    {
-        std::cout << "CreateTexture2D failed " << std::endl;
-        return FALSE;
-    }
-
-    TextureData NewTextureData;
-    NewTextureData.Texture = Texture;
-    NewTextureData.ShaderResourceView = SRV;
-    
-    Textures.insert({ _TextureName, NewTextureData });
-
-    stbi_image_free(LoadedImage);
-
-    return TRUE;
-}
-
 BOOL EngineBase::Init(HINSTANCE _hInstance, int _Width, int _Height)
 {
     WindowWidth = _Width;
@@ -792,7 +727,9 @@ BOOL EngineBase::Init(HINSTANCE _hInstance, int _Width, int _Height)
     CreateSampler();
 
     SetLight();
-    RenderBase::CreateRenderer<BoxRenderer>();
+
+    ResourceManager::Load("zeldaPosed001.fbx");
+    Renderer::CreateRenderer<BoxRenderer>();
 
     return TRUE;
 }

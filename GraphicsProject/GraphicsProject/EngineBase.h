@@ -8,12 +8,6 @@ struct VertexShaderData
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> InputLayout;
 };
 
-struct TextureData
-{
-	Microsoft::WRL::ComPtr<ID3D11Texture2D> Texture;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> ShaderResourceView;
-};
-
 class EngineBase
 {
 public:
@@ -102,16 +96,6 @@ public:
 		return PixelShaders[_ShaderName];
 	}
 
-	const TextureData& GetTextureData(const std::string& _TextureName)
-	{
-		if (Textures.find(_TextureName) == Textures.end())
-		{
-			std::cout << "No Exist TextureData" << std::endl;
-		}
-
-		return Textures[_TextureName];
-	}
-
 	const Microsoft::WRL::ComPtr<ID3D11SamplerState> GetSampler(const std::string& _SamplerName)
 	{
 		if (Samplers.find(_SamplerName) == Samplers.end())
@@ -150,7 +134,6 @@ private:
 
 	std::unordered_map<std::wstring, VertexShaderData> VertexShaders;
 	std::unordered_map<std::wstring, Microsoft::WRL::ComPtr<ID3D11PixelShader>> PixelShaders;
-	std::unordered_map<std::string, TextureData> Textures;
 	std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11SamplerState>> Samplers;
 
 	std::list<std::function<void()>> GUIFunctions;

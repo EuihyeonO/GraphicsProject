@@ -1,5 +1,6 @@
 #include "RenderBase.h"
 #include "Renderer.h"
+#include "ResourceManager.h"
 
 RenderBase::RenderBase()
 {
@@ -7,6 +8,12 @@ RenderBase::RenderBase()
 
 RenderBase::~RenderBase()
 {
+}
+
+void RenderBase::CreateBuffer()
+{
+    CreateVertexBuffer();
+    CreateIndexBuffer();
 }
 
 void RenderBase::Render(float _DeltaTime)
@@ -45,10 +52,10 @@ void RenderBase::CreateIndexBuffer()
 {
     D3D11_BUFFER_DESC BufferDesc = {0, };
     BufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-    BufferDesc.ByteWidth = UINT(sizeof(uint16_t) * MeshData.Indices.size());
+    BufferDesc.ByteWidth = UINT(sizeof(uint32_t) * MeshData.Indices.size());
     BufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
     BufferDesc.CPUAccessFlags = 0;
-    BufferDesc.StructureByteStride = sizeof(uint16_t);
+    BufferDesc.StructureByteStride = sizeof(uint32_t);
 
     D3D11_SUBRESOURCE_DATA IndexBufferData = { 0 };
     IndexBufferData.pSysMem = MeshData.Indices.data();
@@ -74,14 +81,14 @@ void RenderBase::RenderSetting()
     Microsoft::WRL::ComPtr<ID3D11PixelShader> PS = EngineBase::GetInstance().GetPixelShaderData(PSShader);
 
     EngineBase::GetInstance().GetContext()->IASetVertexBuffers(0, 1, VertexBuffer.GetAddressOf(), &Stride, &Offset);
-    EngineBase::GetInstance().GetContext()->IASetIndexBuffer(IndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+    EngineBase::GetInstance().GetContext()->IASetIndexBuffer(IndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
     EngineBase::GetInstance().GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     EngineBase::GetInstance().GetContext()->VSSetShader(VSData.VertexShader.Get(), 0, 0);
     EngineBase::GetInstance().GetContext()->IASetInputLayout(VSData.InputLayout.Get());
     EngineBase::GetInstance().GetContext()->PSSetShader(PS.Get(), 0, 0);
 
     //추후 텍스쳐 여러개 세팅할 수도 있다.
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> SRV = EngineBase::GetInstance().GetTextureData(MeshData.TextureName).ShaderResourceView;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> SRV = ResourceManager::GetTexture(MeshData.TextureName).ShaderResourceView;
     Microsoft::WRL::ComPtr<ID3D11SamplerState> Sampler = EngineBase::GetInstance().GetSampler(SamplerName);
 
     EngineBase::GetInstance().GetContext()->PSSetShaderResources(0, 1, SRV.GetAddressOf());

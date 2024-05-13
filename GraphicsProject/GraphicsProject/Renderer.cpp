@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "ResourceManager.h"
 
 Renderer::Renderer()
 {
@@ -7,6 +8,7 @@ Renderer::Renderer()
 Renderer::~Renderer()
 {
 }
+DirectX::SimpleMath::Vector4 A;
 
 void Renderer::Init()
 {
@@ -14,13 +16,14 @@ void Renderer::Init()
 
     CreateConstantBuffer(EShaderType::PSShader, L"PixelTest.hlsl", EngineBase::GetInstance().GetWorldLight());
     CreateConstantBuffer(EShaderType::PSShader, L"PixelTest.hlsl", MaterialData);
+
     CreateConstantBuffer(EShaderType::VSShader, L"VertexTest.hlsl", TransFormData);
 }
 
 void Renderer::Update(float _DeltaTime)
 {
-    TransFormData.WorldMatrix = DirectX::SimpleMath::Matrix::CreateScale(0.5f) * DirectX::SimpleMath::Matrix::CreateRotationY(0.0f) *
-        DirectX::SimpleMath::Matrix::CreateTranslation(DirectX::SimpleMath::Vector3(0.0f, 0.0f, 1.0f));
+    TransFormData.WorldMatrix = DirectX::SimpleMath::Matrix::CreateScale(0.01f) * DirectX::SimpleMath::Matrix::CreateRotationY(0.0f) *
+        DirectX::SimpleMath::Matrix::CreateTranslation(DirectX::SimpleMath::Vector3(0.0f, 0.0f, 5.0f));
 
     TransFormData.WorldMatrix = TransFormData.WorldMatrix.Transpose();
 
@@ -92,5 +95,44 @@ void Renderer::SetConstantBuffer(const std::wstring& _VSShaderName, const std::w
     {
         EngineBase::GetInstance().GetContext()->PSSetConstantBuffers(Index, 1, _Data.ConstantBuffer.GetAddressOf());
         Index++;
+    }
+}
+
+void Renderer::SetVSShader(const std::wstring& _Shadername)
+{
+    for (std::shared_ptr<RenderBase> _RenderUnit : RenderUnits)
+    {
+        _RenderUnit->SetVSShader(_Shadername);
+    }
+}
+
+void Renderer::SetPSShader(const std::wstring& _Shadername)
+{
+    for (std::shared_ptr<RenderBase> _RenderUnit : RenderUnits)
+    {
+        _RenderUnit->SetPSShader(_Shadername);
+    }
+}
+
+void Renderer::SetSampler(const std::string& _Sampler)
+{
+    for (std::shared_ptr<RenderBase> _RenderUnit : RenderUnits)
+    {
+        _RenderUnit->SetSampler(_Sampler);
+    }
+}
+
+void Renderer::SetModel(const std::string& _Name)
+{
+    const std::list<EMeshData>& MeshData = ResourceManager::GetLoadedMeshList(_Name);
+
+    for (const EMeshData& Mesh : MeshData)
+    {
+        std::shared_ptr<RenderBase> NewRenderUnit = std::make_shared<RenderBase>();
+        
+        NewRenderUnit->SetMesh(Mesh);
+        NewRenderUnit->CreateBuffer();
+
+        RenderUnits.push_back(NewRenderUnit);
     }
 }
