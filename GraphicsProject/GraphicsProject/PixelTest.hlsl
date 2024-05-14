@@ -19,9 +19,7 @@ cbuffer RimLightBuffer : register(b2)
     float RimLightPower;
     
     float RimLightStrength;
-    bool UseSmoothStep;
-    
-    float2 Padding1;
+    float3 Padding1;
 };
 
 struct PixelShaderInput
