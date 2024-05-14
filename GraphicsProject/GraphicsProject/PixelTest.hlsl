@@ -37,6 +37,7 @@ SamplerState Sampler : register(s0);
 float4 main(PixelShaderInput _Input) : SV_TARGET
 {
     float4 Color = DiffuseTexture.Sample(Sampler, _Input.TexCoord);
+    Color = pow(Color, 2.2f);
     
     float3 LightSum = 0.0f;
     float3 EyeDir = EyeWorld - _Input.WorldPos;
@@ -66,6 +67,8 @@ float4 main(PixelShaderInput _Input) : SV_TARGET
     
     float3 RimLight = Rim * RimLightStrength * RimLightColor;
     Color.rgb += RimLight;
+    
+    Color = pow(Color, 1/2.2f);
     
     return Color;
 }
