@@ -522,11 +522,11 @@
     <ClCompile Include="Renderer.cpp">
       <Filter>Private\Engine\Render</Filter>
     </ClCompile>
-    <ClCompile Include="ResourceManager.cpp">
-      <Filter>Private</Filter>
-    </ClCompile>
     <ClCompile Include="ZeldaRenderer.cpp">
       <Filter>Private\Content</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>Private\Engine\Loader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -535,6 +535,12 @@
     </FxCompile>
     <FxCompile Include="PixelTest.hlsl">
       <Filter>Shader\PixelShader</Filter>
+    </FxCompile>
+    <FxCompile Include="CubeMapPixelShader.hlsl">
+      <Filter>Shader\PixelShader</Filter>
+    </FxCompile>
+    <FxCompile Include="CubeMapVertexShader.hlsl">
+      <Filter>Shader\VertexShader</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

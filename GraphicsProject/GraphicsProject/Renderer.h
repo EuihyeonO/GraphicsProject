@@ -88,6 +88,7 @@ public:
 	void SetSampler(const std::string& _Sampler);
 
 	void SetModel(const std::string& _Name);
+	void SetModelToCube(const std::string& _CubeMapTextureName);
 
 	template <typename T>
 	static std::shared_ptr<T> CreateRenderer()

@@ -6,6 +6,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#include <directxtk/DDSTextureLoader.h>
+
 #include <assimp/postprocess.h>
 #include <string_view>
 #include <filesystem>
@@ -26,66 +28,16 @@ ResourceManager::~ResourceManager()
 {
 }
 
-void ResourceManager::LoadTexture(const std::string& _TextureName)
+void ResourceManager::LoadTexture(const std::string& _TextureName, ETextureType _Type)
 {
-    std::string Path = "../Texture/";
-    Path += _TextureName;
-
-    int Width = 0;
-    int Height = 0;
-    int Channels = 0;
-
-    unsigned char* LoadedImage = stbi_load(Path.c_str(), &Width, &Height, &Channels, 0);
-    if (LoadedImage == nullptr)
-    {
-        std::cout << "Image Load Failed" << std::endl;
-		return;
-    }
-
-    std::vector<uint8_t> Image;
-
-    Image.resize(Width * Height * Channels);
-    memcpy(Image.data(), LoadedImage, Image.size() * sizeof(uint8_t));
-
-    Microsoft::WRL::ComPtr<ID3D11Texture2D> Texture;
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> SRV;
-
-    D3D11_TEXTURE2D_DESC TexDesc = {};
-    TexDesc.Width = Width;
-    TexDesc.Height = Height;
-    TexDesc.MipLevels = TexDesc.ArraySize = 1;
-    TexDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    TexDesc.SampleDesc.Count = 1;
-    TexDesc.Usage = D3D11_USAGE_IMMUTABLE;
-    TexDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-
-    D3D11_SUBRESOURCE_DATA InitData;
-    InitData.pSysMem = Image.data();
-    InitData.SysMemPitch = TexDesc.Width * sizeof(uint8_t) * Channels;
-
-    HRESULT Result = EngineBase::GetInstance().GetDevice()->CreateTexture2D(&TexDesc, &InitData, Texture.GetAddressOf());
-    if (Result != S_OK)
-    {
-        std::cout << "CreateTexture2D failed " << std::endl;
-        return;
-    }
-
-    Result = EngineBase::GetInstance().GetDevice()->CreateShaderResourceView(Texture.Get(), nullptr, SRV.GetAddressOf());
-    if (Result != S_OK)
-    {
-        std::cout << "CreateTexture2D failed " << std::endl;
-        return;
-    }
-
-    TextureData NewTextureData;
-    NewTextureData.Texture = Texture;
-    NewTextureData.ShaderResourceView = SRV;
-    
-    stbi_image_free(LoadedImage);
-
-	LoadedTextures.insert({ _TextureName, NewTextureData });
-
-    return;
+	if (_Type == ETextureType::Diffuse)
+	{
+		LoadDiffuseTexture(_TextureName);
+	}
+	else if (_Type == ETextureType::CubeMap)
+	{
+		LoadCubeMapTexture(_TextureName);
+	}
 }
 
 void ResourceManager::Load(const std::string& _FileName, const std::string& _Path)
@@ -205,4 +157,97 @@ void ResourceManager::ProcessMesh(aiMesh* _Mesh, const aiScene* _Scene, std::lis
 	}
 
 	_MeshList.push_back(NewMesh);
+}
+
+void ResourceManager::LoadDiffuseTexture(const std::string& _TextureName)
+{
+	std::string Path = "../Texture/";
+	Path += _TextureName;
+
+	int Width = 0;
+	int Height = 0;
+	int Channels = 0;
+
+	unsigned char* LoadedImage = stbi_load(Path.c_str(), &Width, &Height, &Channels, 0);
+	if (LoadedImage == nullptr)
+	{
+		std::cout << "Image Load Failed" << std::endl;
+		return;
+	}
+
+	std::vector<uint8_t> Image;
+
+	Image.resize(Width * Height * Channels);
+	memcpy(Image.data(), LoadedImage, Image.size() * sizeof(uint8_t));
+
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> Texture;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> SRV;
+
+	D3D11_TEXTURE2D_DESC TexDesc = {};
+	TexDesc.Width = Width;
+	TexDesc.Height = Height;
+	TexDesc.MipLevels = TexDesc.ArraySize = 1;
+	TexDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	TexDesc.SampleDesc.Count = 1;
+	TexDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	TexDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+	D3D11_SUBRESOURCE_DATA InitData;
+	InitData.pSysMem = Image.data();
+	InitData.SysMemPitch = TexDesc.Width * sizeof(uint8_t) * Channels;
+
+	HRESULT Result = EngineBase::GetInstance().GetDevice()->CreateTexture2D(&TexDesc, &InitData, Texture.GetAddressOf());
+	if (Result != S_OK)
+	{
+		std::cout << "CreateTexture2D failed " << std::endl;
+		return;
+	}
+
+	Result = EngineBase::GetInstance().GetDevice()->CreateShaderResourceView(Texture.Get(), nullptr, SRV.GetAddressOf());
+	if (Result != S_OK)
+	{
+		std::cout << "CreateTexture2D failed " << std::endl;
+		return;
+	}
+
+	TextureData NewTextureData;
+	NewTextureData.Texture = Texture;
+	NewTextureData.ShaderResourceView = SRV;
+
+	stbi_image_free(LoadedImage);
+
+	LoadedTextures.insert({ _TextureName, NewTextureData });
+
+	return;
+}
+
+void ResourceManager::LoadCubeMapTexture(const std::string& _TextureName)
+{
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> Texture;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> SRV;
+
+	std::wstring Path = L"../Texture/";
+	std::wstring TextureName;
+	TextureName.assign(_TextureName.begin(), _TextureName.end());
+
+	Path += TextureName;
+
+	HRESULT Result = DirectX::CreateDDSTextureFromFileEx(
+		EngineBase::GetInstance().GetDevice().Get(), Path.c_str(), 0, D3D11_USAGE_DEFAULT,
+		D3D11_BIND_SHADER_RESOURCE, 0,
+		D3D11_RESOURCE_MISC_TEXTURECUBE,
+		DirectX::DDS_LOADER_FLAGS(false), (ID3D11Resource**)Texture.GetAddressOf(),
+		SRV.GetAddressOf(), nullptr);
+
+	if (Result != S_OK)
+	{
+		std::cout << "LoadCubeMapTexture failed " << std::endl;
+		return;
+	}
+
+	TextureData NewTextureData;
+	NewTextureData.Texture = Texture;
+	NewTextureData.ShaderResourceView = SRV;
+
+	LoadedTextures.insert({ _TextureName, NewTextureData });
 }

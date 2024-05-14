@@ -153,7 +153,35 @@ void EngineBase::CreateAllShader()
     }
 
     {
+        std::vector<D3D11_INPUT_ELEMENT_DESC> inputElements =
+        {
+            {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 4 * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 4 * 3 * 2, D3D11_INPUT_PER_VERTEX_DATA, 0},
+        };
+
+        BOOL Result = CreateVertexShader(L"CubeMapVertexShader.hlsl", inputElements);
+
+        if (Result == FALSE)
+        {
+            std::cout << "CubeMapVertexShader Create Failed" << std::endl;
+            return;
+        }
+    }
+
+    {
         BOOL Result = CreatePixelShader(L"PixelTest.hlsl");
+
+        if (Result == FALSE)
+        {
+            std::cout << "PixelTest Create Failed" << std::endl;
+            return;
+        }
+    }
+
+
+    {
+        BOOL Result = CreatePixelShader(L"CubeMapPixelShader.hlsl");
 
         if (Result == FALSE)
         {
@@ -165,7 +193,7 @@ void EngineBase::CreateAllShader()
 
 void EngineBase::LoadAllTexture()
 {
-    ResourceManager::LoadTexture("BoxTexture.png");
+    ResourceManager::LoadTexture("skybox.dds", ETextureType::CubeMap);
 }
 
 void EngineBase::Update(float _DeltaTime)
@@ -736,6 +764,7 @@ BOOL EngineBase::Init(HINSTANCE _hInstance, int _Width, int _Height)
 
     ResourceManager::Load("zeldaPosed001.fbx");
     Renderer::CreateRenderer<ZeldaRenderer>();
+    Renderer::CreateRenderer<BoxRenderer>();
 
     return TRUE;
 }
