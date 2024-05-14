@@ -3,6 +3,7 @@
 #include "ResourceManager.h"
 
 #include "BoxRenderer.h"
+#include "ZeldaRenderer.h"
 
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
@@ -172,6 +173,11 @@ void EngineBase::Update(float _DeltaTime)
     for (std::shared_ptr<Renderer> Renderer : Renderers)
     {
         Renderer->Update(_DeltaTime);
+    }
+
+    for (std::shared_ptr<Renderer> Renderer : Renderers)
+    {
+        Renderer->ConstantBufferUpdate();
     }
 }
 
@@ -729,7 +735,7 @@ BOOL EngineBase::Init(HINSTANCE _hInstance, int _Width, int _Height)
     SetLight();
 
     ResourceManager::Load("zeldaPosed001.fbx");
-    Renderer::CreateRenderer<BoxRenderer>();
+    Renderer::CreateRenderer<ZeldaRenderer>();
 
     return TRUE;
 }

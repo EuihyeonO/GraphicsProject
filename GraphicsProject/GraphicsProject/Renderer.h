@@ -27,7 +27,8 @@ public:
 
 	virtual void Init();
 
-	void Update(float _DeltaTime);
+	virtual void Update(float _DeltaTime);
+	void ConstantBufferUpdate();
 	void Render(float _DeltaTime);
 	void SetConstantBuffer(const std::wstring& _VSShaderName, const std::wstring& _PSShaderName);
 
@@ -105,14 +106,13 @@ public:
 	}
 
 	std::string Name = "";
+
 protected:
-
-private:
-
 	ERimLight RimLightData;
 	EMaterial MaterialData;
 	ETransform TransFormData;
 
+private:
 	std::list<std::shared_ptr<class RenderBase>> RenderUnits;
 
 	std::unordered_map<std::wstring, std::list<EConstantBufferData>> VSConstantBuffers;

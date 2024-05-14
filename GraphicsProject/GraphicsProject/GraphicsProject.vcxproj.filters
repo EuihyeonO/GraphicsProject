@@ -18,12 +18,6 @@
     <Filter Include="Public\Engine">
       <UniqueIdentifier>{301d7e26-258b-4379-9737-75abb77aa313}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Private\Renderer">
-      <UniqueIdentifier>{177e82d0-1fff-421e-b805-b083f8b28bbc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Public\Renderer">
-      <UniqueIdentifier>{cf345a13-48d2-438b-955c-312f0460ccf6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Private\Engine\Base">
       <UniqueIdentifier>{a1d97a3d-88a1-4d93-b48e-4049781bc837}</UniqueIdentifier>
     </Filter>
@@ -71,6 +65,12 @@
     </Filter>
     <Filter Include="Public\Engine\Loader">
       <UniqueIdentifier>{ac949a5b-61f3-4ef9-8a9a-10eca00b3ba6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Content">
+      <UniqueIdentifier>{177e82d0-1fff-421e-b805-b083f8b28bbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Content">
+      <UniqueIdentifier>{cf345a13-48d2-438b-955c-312f0460ccf6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -159,7 +159,7 @@
       <Filter>Public\Engine\Base</Filter>
     </ClInclude>
     <ClInclude Include="BoxRenderer.h">
-      <Filter>Public\Renderer</Filter>
+      <Filter>Public\Content</Filter>
     </ClInclude>
     <ClInclude Include="..\STB\stb_image.h">
       <Filter>Public\Library\STB</Filter>
@@ -437,11 +437,14 @@
     <ClInclude Include="..\Assimp\Compiler\pushpack1.h">
       <Filter>Public\Library\Assimp</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceLoader.h">
-      <Filter>Public\Engine\Loader</Filter>
-    </ClInclude>
     <ClInclude Include="Renderer.h">
       <Filter>Public\Engine\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>Public</Filter>
+    </ClInclude>
+    <ClInclude Include="ZeldaRenderer.h">
+      <Filter>Public\Content</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -493,7 +496,7 @@
       <Filter>Private\Engine\Base</Filter>
     </ClCompile>
     <ClCompile Include="BoxRenderer.cpp">
-      <Filter>Private\Renderer</Filter>
+      <Filter>Private\Content</Filter>
     </ClCompile>
     <ClCompile Include="..\IMGUI\imgui_draw.cpp">
       <Filter>Public\Library\IMGUI</Filter>
@@ -516,11 +519,14 @@
     <ClCompile Include="..\IMGUI\imgui_demo.cpp">
       <Filter>Public\Library\IMGUI</Filter>
     </ClCompile>
-    <ClCompile Include="ResourceLoader.cpp">
-      <Filter>Private\Engine\Loader</Filter>
-    </ClCompile>
     <ClCompile Include="Renderer.cpp">
       <Filter>Private\Engine\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
+    <ClCompile Include="ZeldaRenderer.cpp">
+      <Filter>Private\Content</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

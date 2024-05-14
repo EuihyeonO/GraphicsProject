@@ -289,6 +289,10 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="ZeldaRenderer.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\IMGUI\imgui.cpp" />
@@ -316,6 +320,10 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="ZeldaRenderer.cpp">
       <SubType>
       </SubType>
     </ClCompile>
