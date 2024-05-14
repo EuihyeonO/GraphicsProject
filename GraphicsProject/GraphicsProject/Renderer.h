@@ -3,6 +3,15 @@
 #include "BaseHeader.h"
 #include "RenderBase.h"
 
+struct ERimLight
+{
+	DirectX::SimpleMath::Vector3 RimColor = { 1.0f, 1.0f, 1.0f };
+	float RimPower = 3.0f;
+	
+	float RimStrength = 3.0f;
+	float Padding[3];
+};
+
 class Renderer
 {
 
@@ -100,6 +109,7 @@ protected:
 
 private:
 
+	ERimLight RimLightData;
 	EMaterial MaterialData;
 	ETransform TransFormData;
 

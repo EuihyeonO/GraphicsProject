@@ -177,7 +177,7 @@ void EngineBase::Update(float _DeltaTime)
 
 void EngineBase::Render(float _DeltaTime)
 {
-    float clearColor[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
+    float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
     Context->ClearRenderTargetView(RenderTargetView.Get(), clearColor);
     Context->ClearDepthStencilView(DepthStencilView.Get(),
         D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -239,8 +239,8 @@ BOOL EngineBase::ImguiInit()
 
     AddGUIFunction([this] {ImGui::Checkbox("WireFrame",&isWireFrame);});
 
-    AddGUIFunction([this] {ImGui::SliderFloat3("Pos", &CameraTranslation.x, -10.0f, 10.0f); });
-    AddGUIFunction([this] {ImGui::SliderFloat3("Rot", &CameraRotation.x, -3.14f, 3.14f); });
+    AddGUIFunction([this] {ImGui::SliderFloat3("CameraPos", &CameraTranslation.x, -10.0f, 10.0f); });
+    AddGUIFunction([this] {ImGui::SliderFloat3("CameraRot", &CameraRotation.x, -3.14f, 3.14f); });
     AddGUIFunction([this] {ImGui::SliderFloat3("PointLightPos", &WorldLight.Lights[1].Position.x, -10.0f, 10.0f); });
     AddGUIFunction([this] {ImGui::SliderFloat("SpotPower", &WorldLight.Lights[2].SpotPower, 0.0f, 100.0f); });
 

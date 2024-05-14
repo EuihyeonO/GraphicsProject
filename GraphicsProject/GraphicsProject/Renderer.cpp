@@ -8,7 +8,6 @@ Renderer::Renderer()
 Renderer::~Renderer()
 {
 }
-DirectX::SimpleMath::Vector4 A;
 
 void Renderer::Init()
 {
@@ -16,14 +15,19 @@ void Renderer::Init()
 
     CreateConstantBuffer(EShaderType::PSShader, L"PixelTest.hlsl", EngineBase::GetInstance().GetWorldLight());
     CreateConstantBuffer(EShaderType::PSShader, L"PixelTest.hlsl", MaterialData);
+    CreateConstantBuffer(EShaderType::PSShader, L"PixelTest.hlsl", RimLightData);
 
     CreateConstantBuffer(EShaderType::VSShader, L"VertexTest.hlsl", TransFormData);
+
+    EngineBase::GetInstance().AddGUIFunction([this] {ImGui::DragFloat3("RimLightColor", &RimLightData.RimColor.x, 0.01f, 0.0f, 1.0f); });
+    EngineBase::GetInstance().AddGUIFunction([this] {ImGui::DragFloat("RimPower", &RimLightData.RimPower, 0.01f, 0.0f, 5.0f); });
+    EngineBase::GetInstance().AddGUIFunction([this] {ImGui::DragFloat("RimStrength", &RimLightData.RimStrength, 0.05f, 0.0f, 5.0f); });
 }
 
 void Renderer::Update(float _DeltaTime)
 {
-    TransFormData.WorldMatrix = DirectX::SimpleMath::Matrix::CreateScale(0.01f) * DirectX::SimpleMath::Matrix::CreateRotationY(0.0f) *
-        DirectX::SimpleMath::Matrix::CreateTranslation(DirectX::SimpleMath::Vector3(0.0f, 0.0f, 5.0f));
+    TransFormData.WorldMatrix = DirectX::SimpleMath::Matrix::CreateScale(0.02f) * DirectX::SimpleMath::Matrix::CreateRotationY(0.0f) *
+        DirectX::SimpleMath::Matrix::CreateTranslation(DirectX::SimpleMath::Vector3(0.0f, -2.0f, 3.0f));
 
     TransFormData.WorldMatrix = TransFormData.WorldMatrix.Transpose();
 
