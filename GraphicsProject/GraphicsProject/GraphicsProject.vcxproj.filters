@@ -446,6 +446,9 @@
     <ClInclude Include="ZeldaRenderer.h">
       <Filter>Public\Content</Filter>
     </ClInclude>
+    <ClInclude Include="SphereRenderer.h">
+      <Filter>Public\Content</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\DirectXTK\SimpleMath.inl">
@@ -528,6 +531,9 @@
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Private\Engine\Loader</Filter>
     </ClCompile>
+    <ClCompile Include="SphereRenderer.cpp">
+      <Filter>Private\Content</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexTest.hlsl">
@@ -540,6 +546,12 @@
       <Filter>Shader\PixelShader</Filter>
     </FxCompile>
     <FxCompile Include="CubeMapVertexShader.hlsl">
+      <Filter>Shader\VertexShader</Filter>
+    </FxCompile>
+    <FxCompile Include="EnvMapPixelShader.hlsl">
+      <Filter>Shader\PixelShader</Filter>
+    </FxCompile>
+    <FxCompile Include="EnvMapVertexShader.hlsl">
       <Filter>Shader\VertexShader</Filter>
     </FxCompile>
   </ItemGroup>

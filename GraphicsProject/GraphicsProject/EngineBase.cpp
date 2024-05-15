@@ -1,6 +1,7 @@
 #include "EngineBase.h"
 #include "Renderer.h"
 #include "ResourceManager.h"
+#include "SphereRenderer.h"
 
 #include "BoxRenderer.h"
 #include "ZeldaRenderer.h"
@@ -169,6 +170,24 @@ void EngineBase::CreateAllShader()
         }
     }
 
+
+    {
+        std::vector<D3D11_INPUT_ELEMENT_DESC> inputElements =
+        {
+            {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 4 * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 4 * 3 * 2, D3D11_INPUT_PER_VERTEX_DATA, 0},
+        };
+
+        BOOL Result = CreateVertexShader(L"EnvMapVertexShader.hlsl", inputElements);
+
+        if (Result == FALSE)
+        {
+            std::cout << "EnvMapVertexShader Create Failed" << std::endl;
+            return;
+        }
+    }
+
     {
         BOOL Result = CreatePixelShader(L"PixelTest.hlsl");
 
@@ -179,13 +198,22 @@ void EngineBase::CreateAllShader()
         }
     }
 
-
     {
         BOOL Result = CreatePixelShader(L"CubeMapPixelShader.hlsl");
 
         if (Result == FALSE)
         {
             std::cout << "PixelTest Create Failed" << std::endl;
+            return;
+        }
+    }
+
+    {
+        BOOL Result = CreatePixelShader(L"EnvMapPixelShader.hlsl");
+
+        if (Result == FALSE)
+        {
+            std::cout << "EnvMapPixelShader Create Failed" << std::endl;
             return;
         }
     }
@@ -763,8 +791,10 @@ BOOL EngineBase::Init(HINSTANCE _hInstance, int _Width, int _Height)
     SetLight();
 
     ResourceManager::Load("zeldaPosed001.fbx");
+
     Renderer::CreateRenderer<ZeldaRenderer>();
     Renderer::CreateRenderer<BoxRenderer>();
+    Renderer::CreateRenderer<SphereRenderer>();
 
     return TRUE;
 }

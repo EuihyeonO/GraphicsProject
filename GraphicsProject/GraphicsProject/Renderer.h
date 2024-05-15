@@ -89,6 +89,12 @@ public:
 
 	void SetModel(const std::string& _Name);
 	void SetModelToCube(const std::string& _CubeMapTextureName);
+	void SetModelToSphere(int _XSlice, int _YSlice);
+
+	std::list<std::shared_ptr<class RenderBase>>& GetUnits()
+	{
+		return RenderUnits;
+	}
 
 	template <typename T>
 	static std::shared_ptr<T> CreateRenderer()

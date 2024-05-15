@@ -17,12 +17,14 @@ void Renderer::Init()
     CreateConstantBuffer(EShaderType::PSShader, L"PixelTest.hlsl", MaterialData);
     CreateConstantBuffer(EShaderType::PSShader, L"PixelTest.hlsl", RimLightData);
 
+    CreateConstantBuffer(EShaderType::VSShader, L"CubeMapPixelShader.hlsl", EngineBase::GetInstance().GetWorldLight());
+
     CreateConstantBuffer(EShaderType::VSShader, L"VertexTest.hlsl", TransFormData);
+
     CreateConstantBuffer(EShaderType::VSShader, L"CubeMapVertexShader.hlsl", TransFormData);
 
-    EngineBase::GetInstance().AddGUIFunction([this] {ImGui::DragFloat3("RimLightColor", &RimLightData.RimColor.x, 0.01f, 0.0f, 1.0f); });
-    EngineBase::GetInstance().AddGUIFunction([this] {ImGui::DragFloat("RimPower", &RimLightData.RimPower, 0.01f, 0.0f, 5.0f); });
-    EngineBase::GetInstance().AddGUIFunction([this] {ImGui::DragFloat("RimStrength", &RimLightData.RimStrength, 0.05f, 0.0f, 5.0f); });
+    CreateConstantBuffer(EShaderType::VSShader, L"EnvMapVertexShader.hlsl", TransFormData);
+
 }
 
 void Renderer::Update(float _DeltaTime)
@@ -262,4 +264,56 @@ void Renderer::SetModelToCube(const std::string& _CubeMapTextureName)
     NewUnit->GetMeshData().TextureName = _CubeMapTextureName;
 
     RenderUnits.push_back(NewUnit);
+}
+
+void Renderer::SetModelToSphere(int _XSlice, int _YSlice)
+{
+    std::shared_ptr<RenderBase> NewRenderUnit = std::make_shared<RenderBase>();
+
+    const float Theta = -DirectX::XM_2PI / float(_XSlice);
+    const float Phi = -DirectX::XM_PI / float(_YSlice);
+
+    std::vector<EVertex>& Vertice = NewRenderUnit->GetMeshData().Vertices;
+
+    for (int j = 0; j <= _YSlice; j++) 
+    {
+        DirectX::SimpleMath::Vector3 YStartPoint = DirectX::SimpleMath::Vector3::Transform(
+            DirectX::SimpleMath::Vector3(0.0f, -1.0f, 0.0f), DirectX::SimpleMath::Matrix::CreateRotationZ(Phi * j));
+
+        for (int i = 0; i <= _XSlice; i++) 
+        {
+            EVertex NewVertex;
+
+            NewVertex.Position = DirectX::SimpleMath::Vector3::Transform(
+                YStartPoint, DirectX::SimpleMath::Matrix::CreateRotationY(Theta * float(i)));
+
+            NewVertex.Normal = NewVertex.Position; // 원점이 구의 중심
+            NewVertex.Normal.Normalize();
+            NewVertex.TexCoord =
+                DirectX::SimpleMath::Vector2(float(i) / _XSlice, 1.0f - float(j) / _YSlice);
+
+            Vertice.push_back(NewVertex);
+        }
+    }
+
+    std::vector<uint32_t>& Indices = NewRenderUnit->GetMeshData().Indices;
+
+    for (int j = 0; j < _YSlice; j++) {
+
+        const int Offset = (_XSlice + 1) * j;
+
+        for (int i = 0; i < _XSlice; i++) {
+
+            Indices.push_back(Offset + i);
+            Indices.push_back(Offset + i + _XSlice + 1);
+            Indices.push_back(Offset + i + 1 + _XSlice + 1);
+
+            Indices.push_back(Offset + i);
+            Indices.push_back(Offset + i + 1 + _XSlice + 1);
+            Indices.push_back(Offset + i + 1);
+        }
+    }
+
+    NewRenderUnit->CreateBuffer();
+    RenderUnits.push_back(NewRenderUnit);
 }

@@ -1,29 +1,32 @@
-#include "BoxRenderer.h"
+#include "SphereRenderer.h"
 
-BoxRenderer::BoxRenderer()
+SphereRenderer::SphereRenderer()
 {
 }
 
-BoxRenderer::~BoxRenderer()
+SphereRenderer::~SphereRenderer()
 {
 }
 
-void BoxRenderer::Init()
+void SphereRenderer::Init()
 {
     Renderer::Init();
-    
-    SetModelToCube("skybox.dds");
-    
-    SetVSShader(L"CubeMapVertexShader.hlsl");
-    SetPSShader(L"CubeMapPixelShader.hlsl");
+
+    SetModelToSphere(20, 20);
+
+    std::shared_ptr<RenderBase> Unit = *GetUnits().begin();
+    Unit->GetMeshData().TextureName = "skybox.dds";
+
+    SetVSShader(L"EnvMapVertexShader.hlsl");
+    SetPSShader(L"EnvMapPixelShader.hlsl");
 
     SetSampler("LINEARWRAP");
 }
 
-void BoxRenderer::Update(float _DeltaTime)
+void SphereRenderer::Update(float _DeltaTime)
 {
-    TransFormData.WorldMatrix = DirectX::SimpleMath::Matrix::CreateScale(10.0f) * DirectX::SimpleMath::Matrix::CreateRotationY(0.0f) *
-        DirectX::SimpleMath::Matrix::CreateTranslation(DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f));
+    TransFormData.WorldMatrix = DirectX::SimpleMath::Matrix::CreateScale(1.0f) * DirectX::SimpleMath::Matrix::CreateRotationY(0.0f) *
+        DirectX::SimpleMath::Matrix::CreateTranslation(DirectX::SimpleMath::Vector3(4.0f, 0.0f, 5.0f));
 
     TransFormData.WorldMatrix = TransFormData.WorldMatrix.Transpose();
 

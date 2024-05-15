@@ -17,6 +17,10 @@ void ZeldaRenderer::Init()
     SetVSShader(L"VertexTest.hlsl");
     SetPSShader(L"PixelTest.hlsl");
     SetSampler("LINEARWRAP");
+
+    EngineBase::GetInstance().AddGUIFunction([this] {ImGui::DragFloat3("RimLightColor", &RimLightData.RimColor.x, 0.01f, 0.0f, 1.0f); });
+    EngineBase::GetInstance().AddGUIFunction([this] {ImGui::DragFloat("RimPower", &RimLightData.RimPower, 0.01f, 0.0f, 5.0f); });
+    EngineBase::GetInstance().AddGUIFunction([this] {ImGui::DragFloat("RimStrength", &RimLightData.RimStrength, 0.05f, 0.0f, 5.0f); });
 }
 
 void ZeldaRenderer::Update(float _DeltaTime)
