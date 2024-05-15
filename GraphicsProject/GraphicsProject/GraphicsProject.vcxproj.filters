@@ -560,4 +560,7 @@
       <Filter>Public\Library\Assimp</Filter>
     </Library>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="해야 할 일.txt" />
+  </ItemGroup>
 </Project>
