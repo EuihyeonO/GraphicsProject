@@ -30,13 +30,15 @@ ResourceManager::~ResourceManager()
 
 void ResourceManager::LoadTexture(const std::string& _TextureName, ETextureType _Type)
 {
-	if (_Type == ETextureType::Diffuse)
+	std::string Format = GetFormat(_TextureName);
+
+	if (Format == "dds")
 	{
-		LoadDiffuseTexture(_TextureName);
+		LoadDDSTexture(_TextureName, _Type);
 	}
-	else if (_Type == ETextureType::CubeMap)
+	else
 	{
-		LoadCubeMapTexture(_TextureName);
+		LoadGeneralTexture(_TextureName, _Type);
 	}
 }
 
@@ -159,7 +161,45 @@ void ResourceManager::ProcessMesh(aiMesh* _Mesh, const aiScene* _Scene, std::lis
 	_MeshList.push_back(NewMesh);
 }
 
-void ResourceManager::LoadDiffuseTexture(const std::string& _TextureName)
+void ResourceManager::LoadDDSTexture(const std::string& _TextureName, ETextureType _Type)
+{
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> Texture;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> SRV;
+
+	std::wstring Path = L"../Texture/";
+	std::wstring TextureName;
+	TextureName.assign(_TextureName.begin(), _TextureName.end());
+
+	Path += TextureName;
+
+	UINT Flag = 0;
+
+	if (_Type == ETextureType::CubeMap)
+	{
+		Flag = D3D11_RESOURCE_MISC_TEXTURECUBE;
+	}
+
+	HRESULT Result = DirectX::CreateDDSTextureFromFileEx(
+		EngineBase::GetInstance().GetDevice().Get(), Path.c_str(), 0, D3D11_USAGE_DEFAULT,
+		D3D11_BIND_SHADER_RESOURCE, 0,
+		Flag,
+		DirectX::DDS_LOADER_FLAGS(false), (ID3D11Resource**)Texture.GetAddressOf(),
+		SRV.GetAddressOf(), nullptr);
+
+	if (Result != S_OK)
+	{
+		std::cout << "LoadCubeMapTexture failed " << std::endl;
+		return;
+	}
+
+	TextureData NewTextureData;
+	NewTextureData.Texture = Texture;
+	NewTextureData.ShaderResourceView = SRV;
+
+	LoadedTextures.insert({ _TextureName, NewTextureData });
+}
+
+void ResourceManager::LoadGeneralTexture(const std::string& _TextureName, ETextureType _Type)
 {
 	std::string Path = "../Texture/";
 	Path += _TextureName;
@@ -192,6 +232,11 @@ void ResourceManager::LoadDiffuseTexture(const std::string& _TextureName)
 	TexDesc.Usage = D3D11_USAGE_IMMUTABLE;
 	TexDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 
+	if(_Type == ETextureType::CubeMap)
+	{
+		TexDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+	}
+
 	D3D11_SUBRESOURCE_DATA InitData;
 	InitData.pSysMem = Image.data();
 	InitData.SysMemPitch = TexDesc.Width * sizeof(uint8_t) * Channels;
@@ -221,33 +266,21 @@ void ResourceManager::LoadDiffuseTexture(const std::string& _TextureName)
 	return;
 }
 
-void ResourceManager::LoadCubeMapTexture(const std::string& _TextureName)
+std::string ResourceManager::GetFormat(const std::string& _FileName)
 {
-	Microsoft::WRL::ComPtr<ID3D11Texture2D> Texture;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> SRV;
+	int Count = 0;
 
-	std::wstring Path = L"../Texture/";
-	std::wstring TextureName;
-	TextureName.assign(_TextureName.begin(), _TextureName.end());
-
-	Path += TextureName;
-
-	HRESULT Result = DirectX::CreateDDSTextureFromFileEx(
-		EngineBase::GetInstance().GetDevice().Get(), Path.c_str(), 0, D3D11_USAGE_DEFAULT,
-		D3D11_BIND_SHADER_RESOURCE, 0,
-		D3D11_RESOURCE_MISC_TEXTURECUBE,
-		DirectX::DDS_LOADER_FLAGS(false), (ID3D11Resource**)Texture.GetAddressOf(),
-		SRV.GetAddressOf(), nullptr);
-
-	if (Result != S_OK)
+	for (int i = _FileName.size() - 1; i >= 0; i--)
 	{
-		std::cout << "LoadCubeMapTexture failed " << std::endl;
-		return;
+		if (_FileName[i] == '.')
+		{
+			break;
+		}
+
+		Count++;
 	}
 
-	TextureData NewTextureData;
-	NewTextureData.Texture = Texture;
-	NewTextureData.ShaderResourceView = SRV;
+	std::string Format = _FileName.substr(_FileName.size() - Count, Count);
 
-	LoadedTextures.insert({ _TextureName, NewTextureData });
+	return Format;
 }

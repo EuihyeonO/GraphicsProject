@@ -60,17 +60,17 @@
     <Filter Include="Public\Library\Assimp">
       <UniqueIdentifier>{14f7832c-c260-44ba-b1e7-f44ce26a8a3c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Private\Engine\Loader">
-      <UniqueIdentifier>{de8a984b-52cb-4870-80e6-8b27424a9abf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Public\Engine\Loader">
-      <UniqueIdentifier>{ac949a5b-61f3-4ef9-8a9a-10eca00b3ba6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Private\Content">
       <UniqueIdentifier>{177e82d0-1fff-421e-b805-b083f8b28bbc}</UniqueIdentifier>
     </Filter>
     <Filter Include="Public\Content">
       <UniqueIdentifier>{cf345a13-48d2-438b-955c-312f0460ccf6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Engine\Resource">
+      <UniqueIdentifier>{de8a984b-52cb-4870-80e6-8b27424a9abf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Engine\Resource">
+      <UniqueIdentifier>{ac949a5b-61f3-4ef9-8a9a-10eca00b3ba6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -440,14 +440,14 @@
     <ClInclude Include="Renderer.h">
       <Filter>Public\Engine\Render</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceManager.h">
-      <Filter>Public</Filter>
-    </ClInclude>
     <ClInclude Include="ZeldaRenderer.h">
       <Filter>Public\Content</Filter>
     </ClInclude>
     <ClInclude Include="SphereRenderer.h">
       <Filter>Public\Content</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>Public\Engine\Resource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -529,7 +529,7 @@
       <Filter>Private\Content</Filter>
     </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
-      <Filter>Private\Engine\Loader</Filter>
+      <Filter>Private\Engine\Resource</Filter>
     </ClCompile>
     <ClCompile Include="SphereRenderer.cpp">
       <Filter>Private\Content</Filter>

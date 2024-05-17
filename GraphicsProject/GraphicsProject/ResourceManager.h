@@ -59,8 +59,10 @@ private:
 	static void ProcessNode(struct aiNode* _Node, const struct aiScene* _Scene, std::list<EMeshData>& _MeshList, DirectX::SimpleMath::Matrix _Transform);
 	static void ProcessMesh(struct aiMesh* _Mesh, const struct aiScene* _Scene, std::list<EMeshData>& _MeshList);
 
-	static void LoadDiffuseTexture(const std::string& _TextureName);
-	static void LoadCubeMapTexture(const std::string& _TextureName);
+	static void LoadDDSTexture(const std::string& _TextureName, ETextureType _Type);
+	static void LoadGeneralTexture(const std::string& _TextureName, ETextureType _Type);
+
+	static std::string GetFormat(const std::string& _FileName);
 
 	static std::unordered_map<std::string, TextureData> LoadedTextures;
 	static std::unordered_map<std::string, std::list<EMeshData>> LoadedMeshes;
