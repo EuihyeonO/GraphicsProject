@@ -234,7 +234,8 @@ void ResourceManager::LoadGeneralTexture(const std::string& _TextureName, ETextu
 
 	if(_Type == ETextureType::CubeMap)
 	{
-		TexDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+		std::cout << "CubeMapTexture should be DDS" << std::endl;
+		//TexDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
 	}
 
 	D3D11_SUBRESOURCE_DATA InitData;
