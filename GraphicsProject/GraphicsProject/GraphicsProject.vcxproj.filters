@@ -72,6 +72,12 @@
     <Filter Include="Public\Engine\Resource">
       <UniqueIdentifier>{ac949a5b-61f3-4ef9-8a9a-10eca00b3ba6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Private\Engine\Render\PostProcess">
+      <UniqueIdentifier>{a903bbc2-2592-4682-94f9-f9dc470e7146}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Engine\Render\PostProcess">
+      <UniqueIdentifier>{18db8785-4c42-45f0-8855-bc1628445b71}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -449,6 +455,15 @@
     <ClInclude Include="ResourceManager.h">
       <Filter>Public\Engine\Resource</Filter>
     </ClInclude>
+    <ClInclude Include="ScreenRenderer.h">
+      <Filter>Public\Engine\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="PostProcess.h">
+      <Filter>Public\Engine\Render\PostProcess</Filter>
+    </ClInclude>
+    <ClInclude Include="BloomPostProcess.h">
+      <Filter>Public\Engine\Render\PostProcess</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\DirectXTK\SimpleMath.inl">
@@ -534,14 +549,17 @@
     <ClCompile Include="SphereRenderer.cpp">
       <Filter>Private\Content</Filter>
     </ClCompile>
+    <ClCompile Include="ScreenRenderer.cpp">
+      <Filter>Private\Engine\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="PostProcess.cpp">
+      <Filter>Private\Engine\Render\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="BloomPostProcess.cpp">
+      <Filter>Private\Engine\Render\PostProcess</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="VertexTest.hlsl">
-      <Filter>Shader\VertexShader</Filter>
-    </FxCompile>
-    <FxCompile Include="PixelTest.hlsl">
-      <Filter>Shader\PixelShader</Filter>
-    </FxCompile>
     <FxCompile Include="CubeMapPixelShader.hlsl">
       <Filter>Shader\PixelShader</Filter>
     </FxCompile>
@@ -552,6 +570,24 @@
       <Filter>Shader\PixelShader</Filter>
     </FxCompile>
     <FxCompile Include="EnvMapVertexShader.hlsl">
+      <Filter>Shader\VertexShader</Filter>
+    </FxCompile>
+    <FxCompile Include="MeshLightPixelShader.hlsl">
+      <Filter>Shader\PixelShader</Filter>
+    </FxCompile>
+    <FxCompile Include="MeshPixelShader.hlsl">
+      <Filter>Shader\PixelShader</Filter>
+    </FxCompile>
+    <FxCompile Include="MeshLightVertexShader.hlsl">
+      <Filter>Shader\VertexShader</Filter>
+    </FxCompile>
+    <FxCompile Include="MeshVertexShader.hlsl">
+      <Filter>Shader\VertexShader</Filter>
+    </FxCompile>
+    <FxCompile Include="BloomPixelShader.hlsl">
+      <Filter>Shader\PixelShader</Filter>
+    </FxCompile>
+    <FxCompile Include="BloomVertexShader.hlsl">
       <Filter>Shader\VertexShader</Filter>
     </FxCompile>
   </ItemGroup>

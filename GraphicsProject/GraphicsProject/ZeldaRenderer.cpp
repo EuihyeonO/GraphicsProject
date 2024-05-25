@@ -14,8 +14,8 @@ void ZeldaRenderer::Init()
 
     SetModel("zeldaPosed001.fbx");
 
-    SetVSShader(L"VertexTest.hlsl");
-    SetPSShader(L"PixelTest.hlsl");
+    SetVSShader(L"MeshLightVertexShader.hlsl");
+    SetPSShader(L"MeshLightPixelShader.hlsl");
     SetSampler("LINEARWRAP");
 
     EngineBase::GetInstance().AddGUIFunction([this] {ImGui::DragFloat3("RimLightColor", &RimLightData.RimColor.x, 0.01f, 0.0f, 1.0f); });

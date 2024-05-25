@@ -13,17 +13,17 @@ void Renderer::Init()
 {
     isCallInit = true;
 
-    CreateConstantBuffer(EShaderType::PSShader, L"PixelTest.hlsl", EngineBase::GetInstance().GetWorldLight());
-    CreateConstantBuffer(EShaderType::PSShader, L"PixelTest.hlsl", MaterialData);
-    CreateConstantBuffer(EShaderType::PSShader, L"PixelTest.hlsl", RimLightData);
+    CreateConstantBuffer(EShaderType::PSShader, L"MeshLightPixelShader.hlsl", EngineBase::GetInstance().GetWorldLight());
+    CreateConstantBuffer(EShaderType::PSShader, L"MeshLightPixelShader.hlsl", MaterialData);
+    CreateConstantBuffer(EShaderType::PSShader, L"MeshLightPixelShader.hlsl", RimLightData);
 
     CreateConstantBuffer(EShaderType::VSShader, L"CubeMapPixelShader.hlsl", EngineBase::GetInstance().GetWorldLight());
 
-    CreateConstantBuffer(EShaderType::VSShader, L"VertexTest.hlsl", TransFormData);
-
+    CreateConstantBuffer(EShaderType::VSShader, L"MeshLightVertexShader.hlsl", TransFormData);
+    CreateConstantBuffer(EShaderType::VSShader, L"MeshVertexShader.hlsl", TransFormData);
     CreateConstantBuffer(EShaderType::VSShader, L"CubeMapVertexShader.hlsl", TransFormData);
-
     CreateConstantBuffer(EShaderType::VSShader, L"EnvMapVertexShader.hlsl", TransFormData);
+    CreateConstantBuffer(EShaderType::VSShader, L"BloomVertexShader.hlsl", TransFormData);
 
 }
 
@@ -122,6 +122,7 @@ void Renderer::SetModel(const std::string& _Name)
         std::shared_ptr<RenderBase> NewRenderUnit = std::make_shared<RenderBase>();
         
         NewRenderUnit->SetMesh(Mesh);
+        NewRenderUnit->SetTexture(NewRenderUnit->GetMeshData().TextureName);
         NewRenderUnit->CreateBuffer();
 
         RenderUnits.push_back(NewRenderUnit);
@@ -261,7 +262,7 @@ void Renderer::SetModelToCube(const std::string& _CubeMapTextureName)
                 23, 22, 20 };
 
     NewUnit->CreateBuffer();
-    NewUnit->GetMeshData().TextureName = _CubeMapTextureName;
+    NewUnit->SetTexture(_CubeMapTextureName);
 
     RenderUnits.push_back(NewUnit);
 }
@@ -316,4 +317,49 @@ void Renderer::SetModelToSphere(int _XSlice, int _YSlice)
 
     NewRenderUnit->CreateBuffer();
     RenderUnits.push_back(NewRenderUnit);
+}
+
+void Renderer::SetModelToSquare(float _Width)
+{
+    std::vector<DirectX::SimpleMath::Vector3> Positions;
+    Positions.reserve(4);
+
+    std::vector<DirectX::SimpleMath::Vector3> Normals;
+    Normals.reserve(4);
+
+    std::vector<DirectX::SimpleMath::Vector2> TexCoords;
+    TexCoords.reserve(4);
+
+    Positions.push_back(_Width * DirectX::SimpleMath::Vector3{ -1.0f, 1.0f, 0.0f });
+    Positions.push_back(_Width * DirectX::SimpleMath::Vector3{ -1.0f, -1.0f, 0.0f });
+    Positions.push_back(_Width * DirectX::SimpleMath::Vector3{ 1.0f, -1.0f, 0.0f });
+    Positions.push_back(_Width * DirectX::SimpleMath::Vector3{ 1.0f, 1.0f, 0.0f });
+
+    Normals.push_back({ 0.0f, 0.0f, 1.0f });
+    Normals.push_back({ 0.0f, 0.0f, 1.0f });
+    Normals.push_back({ 0.0f, 0.0f, 1.0f });
+    Normals.push_back({ 0.0f, 0.0f, 1.0f });
+
+    TexCoords.push_back({ 0.0f, 0.0f });
+    TexCoords.push_back({ 0.0f, 1.0f });
+    TexCoords.push_back({ 1.0f, 1.0f });
+    TexCoords.push_back({ 1.0f, 0.0f });
+
+    std::shared_ptr<RenderBase> NewUnit = std::make_shared<RenderBase>();
+
+    for (size_t i = 0; i < 4; i++)
+    {
+        EVertex NewVertex;
+
+        NewVertex.Position = Positions[i];
+        NewVertex.Normal = Normals[i];
+        NewVertex.TexCoord = TexCoords[i];
+
+        NewUnit->GetMeshData().Vertices.push_back(NewVertex);
+    }
+
+    NewUnit->GetMeshData().Indices = { 0, 2, 1, 0, 3, 2 };
+    NewUnit->CreateBuffer();
+
+    RenderUnits.push_back(NewUnit);
 }

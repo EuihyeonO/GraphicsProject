@@ -83,11 +83,20 @@ public:
 		MeshData = _Mesh;
 	}
 
+	void SetTexture(const std::string& _TextureName);
+
+	void SetTextureToSRV(const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> _SRV)
+	{
+		MySRV = _SRV;
+	}
+
 protected:
 	EMeshData MeshData;
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> VertexBuffer;
-    Microsoft::WRL::ComPtr<ID3D11Buffer> IndexBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> IndexBuffer;
+
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> MySRV;
 
 	std::wstring VSShader = L"";
 	std::wstring PSShader = L"";

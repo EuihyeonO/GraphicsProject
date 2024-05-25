@@ -15,7 +15,7 @@ void SphereRenderer::Init()
     SetModelToSphere(20, 20);
 
     std::shared_ptr<RenderBase> Unit = *GetUnits().begin();
-    Unit->GetMeshData().TextureName = "skybox.dds";
+    Unit->SetTexture("skybox.dds");
 
     SetVSShader(L"EnvMapVertexShader.hlsl");
     SetPSShader(L"EnvMapPixelShader.hlsl");

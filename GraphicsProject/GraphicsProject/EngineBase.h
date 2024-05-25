@@ -66,6 +66,7 @@ public:
 	BOOL CreateSwapChain();
 	BOOL CreateRasterizerState();
 	BOOL CreateDepthStencil();
+	BOOL CreateDoubleBuffer();
 
 	BOOL CreateVertexShader(const std::wstring& _ShaderFileName, std::vector<D3D11_INPUT_ELEMENT_DESC> _InputElement);
 	BOOL CreateInputLayOut(std::vector<D3D11_INPUT_ELEMENT_DESC> _InputElement, Microsoft::WRL::ComPtr<ID3D11InputLayout>& _InputLayOut, Microsoft::WRL::ComPtr<ID3DBlob> _ShaderBlob);
@@ -123,6 +124,7 @@ public:
 
 public:
 	void AddRenderer(std::shared_ptr<class Renderer> _NewRenderer);
+	void CreatePostProcess();
 
 protected:
 
@@ -151,7 +153,12 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Device> Device;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> Context;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> SwapChain;
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> RenderTargetView;
+
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> BackBufferRTV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> BackBufferSRV;
+
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> DoubleBufferRTV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> DoubleBufferSRV;
 
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> SolidRasterizerState;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> WireRasterizerState;
@@ -163,5 +170,7 @@ private:
 	D3D11_VIEWPORT ScreenViewPort;
 
 	UINT NumQualityLevels = 0;
+
+	std::vector<std::shared_ptr<class PostProcess>> PostProcesses;
 };
 

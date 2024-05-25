@@ -265,6 +265,10 @@
     <ClInclude Include="..\IMGUI\imstb_truetype.h" />
     <ClInclude Include="..\STB\stb_image.h" />
     <ClInclude Include="BaseHeader.h" />
+    <ClInclude Include="BloomPostProcess.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="BoxRenderer.h">
       <SubType>
       </SubType>
@@ -275,6 +279,10 @@
     </ClInclude>
     <ClInclude Include="framework.h" />
     <ClInclude Include="GraphicsProject.h" />
+    <ClInclude Include="PostProcess.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="RenderBase.h">
       <SubType>
       </SubType>
@@ -285,6 +293,10 @@
     </ClInclude>
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ResourceManager.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="ScreenRenderer.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -306,6 +318,10 @@
     <ClCompile Include="..\IMGUI\imgui_impl_win32.cpp" />
     <ClCompile Include="..\IMGUI\imgui_tables.cpp" />
     <ClCompile Include="..\IMGUI\imgui_widgets.cpp" />
+    <ClCompile Include="BloomPostProcess.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="BoxRenderer.cpp">
       <SubType>
       </SubType>
@@ -315,6 +331,10 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="PostProcess.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="RenderBase.cpp">
       <SubType>
       </SubType>
@@ -324,6 +344,10 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="ScreenRenderer.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -351,6 +375,18 @@
     <None Include="LightHeader.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="BloomPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="BloomVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
     <FxCompile Include="CubeMapPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -363,7 +399,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
-    <FxCompile Include="PixelTest.hlsl">
+    <FxCompile Include="MeshLightPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
@@ -381,7 +417,19 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
-    <FxCompile Include="VertexTest.hlsl">
+    <FxCompile Include="MeshLightVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="MeshPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="MeshVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>

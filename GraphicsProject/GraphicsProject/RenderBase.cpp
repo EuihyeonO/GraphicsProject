@@ -88,11 +88,18 @@ void RenderBase::RenderSetting()
     EngineBase::GetInstance().GetContext()->PSSetShader(PS.Get(), 0, 0);
 
     //추후 텍스쳐 여러개 세팅할 수도 있다.
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> SRV = ResourceManager::GetTexture(MeshData.TextureName).ShaderResourceView;
     Microsoft::WRL::ComPtr<ID3D11SamplerState> Sampler = EngineBase::GetInstance().GetSampler(SamplerName);
 
-    EngineBase::GetInstance().GetContext()->PSSetShaderResources(0, 1, SRV.GetAddressOf());
+    EngineBase::GetInstance().GetContext()->PSSetShaderResources(0, 1, MySRV.GetAddressOf());
     EngineBase::GetInstance().GetContext()->PSSetSamplers(0, 1, Sampler.GetAddressOf());
+}
+
+void RenderBase::SetTexture(const std::string& _TextureName)
+{
+    MeshData.TextureName = _TextureName;
+
+    const TextureData& _TextureData = ResourceManager::GetTexture(_TextureName);
+    MySRV = _TextureData.ShaderResourceView;
 }
 
 

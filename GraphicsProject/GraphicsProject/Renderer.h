@@ -90,6 +90,7 @@ public:
 	void SetModel(const std::string& _Name);
 	void SetModelToCube(const std::string& _CubeMapTextureName);
 	void SetModelToSphere(int _XSlice, int _YSlice);
+	void SetModelToSquare(float _Width);
 
 	std::list<std::shared_ptr<class RenderBase>>& GetUnits()
 	{

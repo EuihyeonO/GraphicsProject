@@ -2,9 +2,12 @@
 #include "Renderer.h"
 #include "ResourceManager.h"
 #include "SphereRenderer.h"
+#include "ScreenRenderer.h"
 
 #include "BoxRenderer.h"
 #include "ZeldaRenderer.h"
+#include "PostProcess.h"
+#include "BloomPostProcess.h"
 
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
@@ -111,12 +114,13 @@ void EngineBase::Loop()
             ViewMat = DirectX::XMMatrixLookToLH(EyePos, EyeDir, UpDir);
 
             WorldLight.EyeWorld = DirectX::SimpleMath::Vector3::Transform(DirectX::SimpleMath::Vector3(0.0f), ViewMat.Invert());
-
+           
             ImguiUpdate();
-            ImGui::Render();
 
             Update(CurDelta);
             Render(CurDelta);
+
+            ImGui::Render();
 
             ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
@@ -144,11 +148,11 @@ void EngineBase::CreateAllShader()
             {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 4 * 3 * 2, D3D11_INPUT_PER_VERTEX_DATA, 0},
         };
 
-        BOOL Result = CreateVertexShader(L"VertexTest.hlsl", inputElements);
+        BOOL Result = CreateVertexShader(L"MeshLightVertexShader.hlsl", inputElements);
 
         if (Result == FALSE)
         {
-            std::cout << "VertexTest Create Failed" << std::endl;
+            std::cout << "MeshLightVertexShader Create Failed" << std::endl;
             return;
         }
     }
@@ -170,7 +174,6 @@ void EngineBase::CreateAllShader()
         }
     }
 
-
     {
         std::vector<D3D11_INPUT_ELEMENT_DESC> inputElements =
         {
@@ -189,11 +192,47 @@ void EngineBase::CreateAllShader()
     }
 
     {
-        BOOL Result = CreatePixelShader(L"PixelTest.hlsl");
+        std::vector<D3D11_INPUT_ELEMENT_DESC> inputElements =
+        {
+            {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 4 * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 4 * 3 * 2, D3D11_INPUT_PER_VERTEX_DATA, 0},
+        };
+
+        BOOL Result = CreateVertexShader(L"MeshVertexShader.hlsl", inputElements);
 
         if (Result == FALSE)
         {
-            std::cout << "PixelTest Create Failed" << std::endl;
+            std::cout << "MeshVertexShader Create Failed" << std::endl;
+            return;
+        }
+    }
+
+    {
+        std::vector<D3D11_INPUT_ELEMENT_DESC> inputElements =
+        {
+            {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 4 * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 4 * 3 * 2, D3D11_INPUT_PER_VERTEX_DATA, 0},
+        };
+
+        BOOL Result = CreateVertexShader(L"BloomVertexShader.hlsl", inputElements);
+
+        if (Result == FALSE)
+        {
+            std::cout << "BloomVertexShader Create Failed" << std::endl;
+            return;
+        }
+    }
+
+//픽셀쉐이더
+
+    {
+        BOOL Result = CreatePixelShader(L"MeshLightPixelShader.hlsl");
+
+        if (Result == FALSE)
+        {
+            std::cout << "MeshLightPixelShader Create Failed" << std::endl;
             return;
         }
     }
@@ -203,7 +242,7 @@ void EngineBase::CreateAllShader()
 
         if (Result == FALSE)
         {
-            std::cout << "PixelTest Create Failed" << std::endl;
+            std::cout << "CubeMapPixelShader Create Failed" << std::endl;
             return;
         }
     }
@@ -217,11 +256,32 @@ void EngineBase::CreateAllShader()
             return;
         }
     }
+
+    {
+        BOOL Result = CreatePixelShader(L"MeshPixelShader.hlsl");
+
+        if (Result == FALSE)
+        {
+            std::cout << "MeshPixelShader Create Failed" << std::endl;
+            return;
+        }
+    }
+
+    {
+        BOOL Result = CreatePixelShader(L"BloomPixelShader.hlsl");
+
+        if (Result == FALSE)
+        {
+            std::cout << "BloomPixelShader Create Failed" << std::endl;
+            return;
+        }
+    }
 }
 
 void EngineBase::LoadAllTexture()
 {
     ResourceManager::LoadTexture("skybox.dds", ETextureType::CubeMap);
+    ResourceManager::LoadTexture("BoxTexture.png", ETextureType::Diffuse);
 }
 
 void EngineBase::Update(float _DeltaTime)
@@ -240,11 +300,11 @@ void EngineBase::Update(float _DeltaTime)
 void EngineBase::Render(float _DeltaTime)
 {
     float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-    Context->ClearRenderTargetView(RenderTargetView.Get(), clearColor);
+    Context->ClearRenderTargetView(DoubleBufferRTV.Get(), clearColor);
     Context->ClearDepthStencilView(DepthStencilView.Get(),
         D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-    Context->OMSetRenderTargets(1, RenderTargetView.GetAddressOf(), DepthStencilView.Get());
+    Context->OMSetRenderTargets(1, DoubleBufferRTV.GetAddressOf(), DepthStencilView.Get());
     Context->OMSetDepthStencilState(DepthStencilState.Get(), 0);
     
     if (isWireFrame == false)
@@ -259,6 +319,15 @@ void EngineBase::Render(float _DeltaTime)
     for (std::shared_ptr<Renderer> Renderer : Renderers)
     {
         Renderer->Render(_DeltaTime);
+    }
+
+    Context->ClearRenderTargetView(BackBufferRTV.Get(), clearColor);
+    Context->OMSetRenderTargets(1, BackBufferRTV.GetAddressOf(), DepthStencilView.Get());
+
+    for (std::shared_ptr<PostProcess> PostProcess : PostProcesses)
+    {
+        PostProcess->SetTexture(DoubleBufferSRV);
+        PostProcess->Render(_DeltaTime);
     }
 }
 
@@ -355,6 +424,12 @@ BOOL EngineBase::DirectXInit()
         std::cout << "CreateSwapChain() is Failed!" << std::endl;
         return FALSE;
     }
+
+    if (!CreateDoubleBuffer())
+    {
+        std::cout << "CreateDoubleBuffer() is Failed!" << std::endl;
+        return FALSE;
+    }
     
     if (!CreateRasterizerState())
     {
@@ -426,13 +501,6 @@ BOOL EngineBase::CreateSwapChain()
 
     SwapChain.Reset();
 
-    //멀티샘플링 안티에일리어싱 (MSAA)
-    Device->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, 4, &NumQualityLevels);
-    if (NumQualityLevels <= 0)
-    {
-        std::cout << "MSAA not supported!" << std::endl;
-    }
-
     DXGI_SWAP_CHAIN_DESC SD;
     ZeroMemory(&SD, sizeof(SD));
     SD.BufferDesc.Width = (UINT)WindowWidth;                 // 백버퍼 사이즈 (너비)
@@ -441,14 +509,14 @@ BOOL EngineBase::CreateSwapChain()
     SD.BufferCount = 2;                                // 백버퍼 개수
     SD.BufferDesc.RefreshRate.Numerator = 60;          // 갱신률 (분자)
     SD.BufferDesc.RefreshRate.Denominator = 1;         // 갱신률 (분모)
-    SD.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;  // 스왑체인을 어떻게 쓸 것인가
+    SD.BufferUsage = DXGI_USAGE_SHADER_INPUT | DXGI_USAGE_RENDER_TARGET_OUTPUT;  // 스왑체인을 어떻게 쓸 것인가
     SD.OutputWindow = hWnd;                            // 스왑체인이 사용될 윈도우
     SD.Windowed = TRUE;                                // 창모드, 전체모드 
     SD.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH; // 창모드, 전체모드 전환을 허용할 것인가
     SD.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;  
 
-    SD.SampleDesc.Count = 4;
-    SD.SampleDesc.Quality = NumQualityLevels - 1;
+    SD.SampleDesc.Count = 1;
+    SD.SampleDesc.Quality = 0;
 
     Result = DXGIFactory->CreateSwapChain(Device.Get(), &SD, SwapChain.GetAddressOf());
 
@@ -457,14 +525,14 @@ BOOL EngineBase::CreateSwapChain()
         return FALSE;
     }
 
-    //백버퍼의 렌더타겟 뷰 생성
-    ID3D11Texture2D* BackBuffer;
-    SwapChain->GetBuffer(0, IID_PPV_ARGS(&BackBuffer));
+    //백버퍼의 렌더타겟 뷰, 쉐이더 리소스 뷰 생성
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> BackBuffer;
+    SwapChain->GetBuffer(0, IID_PPV_ARGS(BackBuffer.GetAddressOf()));
 
-    if (BackBuffer) 
+    if (BackBuffer != nullptr) 
     {
-        Device->CreateRenderTargetView(BackBuffer, NULL, &RenderTargetView);
-        BackBuffer->Release();
+        Device->CreateRenderTargetView(BackBuffer.Get(), nullptr, BackBufferRTV.GetAddressOf());
+        Device->CreateShaderResourceView(BackBuffer.Get(), nullptr, BackBufferSRV.GetAddressOf());
     }
     else 
     {
@@ -645,9 +713,64 @@ BOOL EngineBase::CreatePixelShader(const std::wstring& _ShaderFileName)
     return TRUE;
 }
 
+BOOL EngineBase::CreateDoubleBuffer()
+{
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> Texture;
+
+    D3D11_TEXTURE2D_DESC txtDesc;
+    ZeroMemory(&txtDesc, sizeof(txtDesc));
+    txtDesc.Width = WindowWidth;
+    txtDesc.Height = WindowHeight;
+    txtDesc.MipLevels = txtDesc.ArraySize = 1;
+    txtDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; // 이미지 처리용도
+    txtDesc.SampleDesc.Count = 1;
+    txtDesc.Usage = D3D11_USAGE_DEFAULT;
+    txtDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET | D3D11_BIND_UNORDERED_ACCESS;
+    txtDesc.MiscFlags = 0;
+    txtDesc.CPUAccessFlags = 0;
+    
+    D3D11_RENDER_TARGET_VIEW_DESC viewDesc;
+    viewDesc.Format = txtDesc.Format;
+    viewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+    viewDesc.Texture2D.MipSlice = 0;
+
+    HRESULT Result;
+    Result = Device->CreateTexture2D(&txtDesc, NULL, Texture.GetAddressOf());
+    if (Result != S_OK)
+    {
+        std::cout << "CreateTexture2D() failed" << std::endl;
+        return FALSE;
+    }
+
+    Result = Device->CreateRenderTargetView(Texture.Get(), &viewDesc, DoubleBufferRTV.GetAddressOf());
+    if (Result != S_OK)
+    {
+        std::cout << "CreateRenderTargetView() failed" << std::endl;
+        return FALSE;
+    }
+
+    Result = Device->CreateShaderResourceView(Texture.Get(), nullptr, DoubleBufferSRV.GetAddressOf());
+    if (Result != S_OK)
+    {
+        std::cout << "CreateShaderResourceView() failed" << std::endl;
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
 void EngineBase::AddRenderer(std::shared_ptr<Renderer> _NewRenderer)
 {
     Renderers.push_back(_NewRenderer);
+}
+
+void EngineBase::CreatePostProcess()
+{
+    std::shared_ptr<BloomPostProcess> Bloom = std::make_shared<BloomPostProcess>();
+    Bloom->Init();
+
+    PostProcesses.push_back(Bloom);
+
 }
 
 BOOL EngineBase::CreateDepthStencil()
@@ -661,16 +784,8 @@ BOOL EngineBase::CreateDepthStencil()
 
     DepthStencilBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
    
-    if (NumQualityLevels > 0) 
-    {
-        DepthStencilBufferDesc.SampleDesc.Count = 4;
-        DepthStencilBufferDesc.SampleDesc.Quality = NumQualityLevels - 1;
-    }
-    else 
-    {
-        DepthStencilBufferDesc.SampleDesc.Count = 1; 
-        DepthStencilBufferDesc.SampleDesc.Quality = 0;
-    }
+    DepthStencilBufferDesc.SampleDesc.Count = 1; 
+    DepthStencilBufferDesc.SampleDesc.Quality = 0;
 
     DepthStencilBufferDesc.Usage = D3D11_USAGE_DEFAULT;
     DepthStencilBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
@@ -787,6 +902,8 @@ BOOL EngineBase::Init(HINSTANCE _hInstance, int _Width, int _Height)
     CreateAllShader();
     LoadAllTexture();
     CreateSampler();
+
+    CreatePostProcess();
 
     SetLight();
 
