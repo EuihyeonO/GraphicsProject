@@ -13,5 +13,14 @@ float4 main(PixelShaderInput _Input) : SV_TARGET
 {
     float4 Color = DiffuseTexture.Sample(Sampler, _Input.TexCoord);
     
-    return Color;
+    float Luminance = 0.2126f * Color.r + 0.7152f * Color.g + 0.0722f * Color.b;
+    
+    if (Luminance > 0.8f)
+    {
+        return Color;
+    }
+    else
+    {
+        return (float4) 0.0f;
+    }
 }

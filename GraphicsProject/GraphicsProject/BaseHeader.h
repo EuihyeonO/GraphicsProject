@@ -65,6 +65,12 @@ struct TextureData
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> ShaderResourceView;
 };
 
+struct RenderTarget
+{
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> RTV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> SRV;
+};
+
 struct EMeshData
 {
 	std::vector<struct EVertex> Vertices;

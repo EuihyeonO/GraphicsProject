@@ -1,13 +1,5 @@
 #include "LightHeader.hlsli"
 
-cbuffer TransformData : register(b0)
-{
-    matrix World;
-    matrix View;
-    matrix Projection;
-    matrix InvTranspose;
-};
-
 struct VertexShaderInput
 {
     float3 pos : POSITION;
@@ -25,10 +17,6 @@ PixelShaderInput main(VertexShaderInput _Input)
 {
     PixelShaderInput Output;
     float4 Pos = float4(_Input.pos, 1.0f);
-    
-    Pos = mul(Pos, World);
-    Pos = mul(Pos, View);
-    Pos = mul(Pos, Projection);
 
     Output.pos = Pos;
     Output.TexCoord = _Input.TexCoord;

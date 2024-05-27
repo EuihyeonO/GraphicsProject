@@ -23,8 +23,6 @@ void Renderer::Init()
     CreateConstantBuffer(EShaderType::VSShader, L"MeshVertexShader.hlsl", TransFormData);
     CreateConstantBuffer(EShaderType::VSShader, L"CubeMapVertexShader.hlsl", TransFormData);
     CreateConstantBuffer(EShaderType::VSShader, L"EnvMapVertexShader.hlsl", TransFormData);
-    CreateConstantBuffer(EShaderType::VSShader, L"BloomVertexShader.hlsl", TransFormData);
-
 }
 
 void Renderer::Update(float _DeltaTime)

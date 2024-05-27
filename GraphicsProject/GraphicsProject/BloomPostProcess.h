@@ -1,10 +1,10 @@
 #pragma once
 #include "PostProcess.h"
 
-struct EBloomData
+struct EBlurData
 {
-	int Width = 1600;
-	int Height = 900;
+	int Width = 1600 * 0.25f;
+	int Height = 900 * 0.25f;
 	int Padding1 = 0;
 	int Padding2 = 0;
 };
@@ -28,6 +28,16 @@ public:
 protected:
 	
 private:
-	EBloomData BloomData;
+	void CreateBlendState();
+
+	Microsoft::WRL::ComPtr<ID3D11BlendState> BlendState;
+
+	EBlurData BlurData;
+
+	RenderTarget BlurTarget;
+	RenderTarget DetectTarget;
+
+	D3D11_VIEWPORT DownViewPort;
+	D3D11_VIEWPORT UpViewPort;
 };
 

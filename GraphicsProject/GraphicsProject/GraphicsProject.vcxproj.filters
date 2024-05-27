@@ -584,11 +584,14 @@
     <FxCompile Include="MeshVertexShader.hlsl">
       <Filter>Shader\VertexShader</Filter>
     </FxCompile>
-    <FxCompile Include="BloomPixelShader.hlsl">
+    <FxCompile Include="BlurPixelShader.hlsl">
       <Filter>Shader\PixelShader</Filter>
     </FxCompile>
-    <FxCompile Include="BloomVertexShader.hlsl">
-      <Filter>Shader\VertexShader</Filter>
+    <FxCompile Include="BrightDetectPixelShader.hlsl">
+      <Filter>Shader\PixelShader</Filter>
+    </FxCompile>
+    <FxCompile Include="BloomPixelShader.hlsl">
+      <Filter>Shader\PixelShader</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

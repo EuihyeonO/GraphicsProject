@@ -85,9 +85,16 @@ public:
 
 	void SetTexture(const std::string& _TextureName);
 
-	void SetTextureToSRV(const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> _SRV)
+	void SetTextureToSRV(const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> _SRV, int _Index = 0)
 	{
-		MySRV = _SRV;
+		if (_Index >= SRVs.size())
+		{
+			SRVs.push_back(_SRV);
+		}
+		else
+		{
+			SRVs[_Index] = _SRV;
+		}
 	}
 
 protected:
@@ -105,5 +112,6 @@ protected:
 
 private:
 	std::shared_ptr<class Renderer> Owner = nullptr;
+	std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> SRVs;
 };
 

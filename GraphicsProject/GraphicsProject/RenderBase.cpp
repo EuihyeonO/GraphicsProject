@@ -4,6 +4,7 @@
 
 RenderBase::RenderBase()
 {
+    SRVs.push_back(MySRV);
 }
 
 RenderBase::~RenderBase()
@@ -20,6 +21,9 @@ void RenderBase::Render(float _DeltaTime)
 {
     UINT IndexCount = (UINT)MeshData.Indices.size();
     EngineBase::GetInstance().GetContext()->DrawIndexed(IndexCount, 0, 0);
+    
+    ID3D11ShaderResourceView* SRV[2] = {NULL, };
+    EngineBase::GetInstance().GetContext()->PSSetShaderResources(0, 2, SRV);
 }
 
 void RenderBase::CreateVertexBuffer()
@@ -90,7 +94,7 @@ void RenderBase::RenderSetting()
     //추후 텍스쳐 여러개 세팅할 수도 있다.
     Microsoft::WRL::ComPtr<ID3D11SamplerState> Sampler = EngineBase::GetInstance().GetSampler(SamplerName);
 
-    EngineBase::GetInstance().GetContext()->PSSetShaderResources(0, 1, MySRV.GetAddressOf());
+    EngineBase::GetInstance().GetContext()->PSSetShaderResources(0, SRVs.size(), SRVs.data()->GetAddressOf());
     EngineBase::GetInstance().GetContext()->PSSetSamplers(0, 1, Sampler.GetAddressOf());
 }
 
@@ -99,7 +103,7 @@ void RenderBase::SetTexture(const std::string& _TextureName)
     MeshData.TextureName = _TextureName;
 
     const TextureData& _TextureData = ResourceManager::GetTexture(_TextureName);
-    MySRV = _TextureData.ShaderResourceView;
+    SRVs[0] = _TextureData.ShaderResourceView;
 }
 
 

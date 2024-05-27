@@ -74,6 +74,12 @@ public:
 
 	BOOL LoadTexture(const std::string& _TextureName);
 	BOOL CreateSampler();
+	RenderTarget CreateRenderTarget(UINT _Width, UINT _Height);
+	
+	RenderTarget GetDoubleBuffer()
+	{
+		return { DoubleBufferRTV, DoubleBufferSRV };
+	}
 
 	void SetViewport();
 
@@ -110,6 +116,16 @@ public:
 	EWorldLight& GetWorldLight()
 	{
 		return WorldLight;
+	}
+
+	std::pair<int, int> GetWindowSize()
+	{
+		return { WindowWidth, WindowHeight };
+	}
+
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> GetDepthStencilView()
+	{
+		return DepthStencilView;
 	}
 
 public:
@@ -172,5 +188,7 @@ private:
 	UINT NumQualityLevels = 0;
 
 	std::vector<std::shared_ptr<class PostProcess>> PostProcesses;
+
+	std::shared_ptr<Renderer> BackBufferRenderer;
 };
 

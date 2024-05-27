@@ -215,14 +215,6 @@ void EngineBase::CreateAllShader()
             {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 4 * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
             {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 4 * 3 * 2, D3D11_INPUT_PER_VERTEX_DATA, 0},
         };
-
-        BOOL Result = CreateVertexShader(L"BloomVertexShader.hlsl", inputElements);
-
-        if (Result == FALSE)
-        {
-            std::cout << "BloomVertexShader Create Failed" << std::endl;
-            return;
-        }
     }
 
 //픽셀쉐이더
@@ -268,6 +260,26 @@ void EngineBase::CreateAllShader()
     }
 
     {
+        BOOL Result = CreatePixelShader(L"BlurPixelShader.hlsl");
+
+        if (Result == FALSE)
+        {
+            std::cout << "BlurPixelShader Create Failed" << std::endl;
+            return;
+        }
+    }
+
+    {
+        BOOL Result = CreatePixelShader(L"BrightDetectPixelShader.hlsl");
+
+        if (Result == FALSE)
+        {
+            std::cout << "BrightDetectPixelShader Create Failed" << std::endl;
+            return;
+        }
+    }
+
+    {
         BOOL Result = CreatePixelShader(L"BloomPixelShader.hlsl");
 
         if (Result == FALSE)
@@ -299,6 +311,8 @@ void EngineBase::Update(float _DeltaTime)
 
 void EngineBase::Render(float _DeltaTime)
 {
+    SetViewport();
+
     float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
     Context->ClearRenderTargetView(DoubleBufferRTV.Get(), clearColor);
     Context->ClearDepthStencilView(DepthStencilView.Get(),
@@ -321,14 +335,13 @@ void EngineBase::Render(float _DeltaTime)
         Renderer->Render(_DeltaTime);
     }
 
-    Context->ClearRenderTargetView(BackBufferRTV.Get(), clearColor);
-    Context->OMSetRenderTargets(1, BackBufferRTV.GetAddressOf(), DepthStencilView.Get());
-
     for (std::shared_ptr<PostProcess> PostProcess : PostProcesses)
     {
-        PostProcess->SetTexture(DoubleBufferSRV);
         PostProcess->Render(_DeltaTime);
     }
+
+    Context->OMSetRenderTargets(1, BackBufferRTV.GetAddressOf(), DepthStencilView.Get());
+    BackBufferRenderer->Render(_DeltaTime);
 }
 
 void EngineBase::SetLight()
@@ -715,20 +728,43 @@ BOOL EngineBase::CreatePixelShader(const std::wstring& _ShaderFileName)
 
 BOOL EngineBase::CreateDoubleBuffer()
 {
+    RenderTarget DoubleBufferTarget = CreateRenderTarget(WindowWidth, WindowHeight);
+    DoubleBufferRTV = DoubleBufferTarget.RTV;
+    DoubleBufferSRV = DoubleBufferTarget.SRV;
+
+    if (DoubleBufferRTV == nullptr)
+    {
+        std::cout << "CreateRenderTargetView() failed" << std::endl;
+        return FALSE;
+    }
+
+    if (DoubleBufferSRV == nullptr)
+    {
+        std::cout << "CreateShaderResourceView() failed" << std::endl;
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+RenderTarget EngineBase::CreateRenderTarget(UINT _Width, UINT _Height)
+{
+    RenderTarget NewRenderTarget;
+
     Microsoft::WRL::ComPtr<ID3D11Texture2D> Texture;
 
     D3D11_TEXTURE2D_DESC txtDesc;
     ZeroMemory(&txtDesc, sizeof(txtDesc));
-    txtDesc.Width = WindowWidth;
-    txtDesc.Height = WindowHeight;
+    txtDesc.Width = _Width;
+    txtDesc.Height = _Height;
     txtDesc.MipLevels = txtDesc.ArraySize = 1;
-    txtDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; // 이미지 처리용도
+    txtDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
     txtDesc.SampleDesc.Count = 1;
     txtDesc.Usage = D3D11_USAGE_DEFAULT;
     txtDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET | D3D11_BIND_UNORDERED_ACCESS;
     txtDesc.MiscFlags = 0;
     txtDesc.CPUAccessFlags = 0;
-    
+
     D3D11_RENDER_TARGET_VIEW_DESC viewDesc;
     viewDesc.Format = txtDesc.Format;
     viewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
@@ -739,24 +775,21 @@ BOOL EngineBase::CreateDoubleBuffer()
     if (Result != S_OK)
     {
         std::cout << "CreateTexture2D() failed" << std::endl;
-        return FALSE;
     }
 
-    Result = Device->CreateRenderTargetView(Texture.Get(), &viewDesc, DoubleBufferRTV.GetAddressOf());
+    Result = Device->CreateRenderTargetView(Texture.Get(), &viewDesc, NewRenderTarget.RTV.GetAddressOf());
     if (Result != S_OK)
     {
         std::cout << "CreateRenderTargetView() failed" << std::endl;
-        return FALSE;
     }
 
-    Result = Device->CreateShaderResourceView(Texture.Get(), nullptr, DoubleBufferSRV.GetAddressOf());
+    Result = Device->CreateShaderResourceView(Texture.Get(), nullptr, NewRenderTarget.SRV.GetAddressOf());
     if (Result != S_OK)
     {
         std::cout << "CreateShaderResourceView() failed" << std::endl;
-        return FALSE;
     }
 
-    return TRUE;
+    return NewRenderTarget;
 }
 
 void EngineBase::AddRenderer(std::shared_ptr<Renderer> _NewRenderer)
@@ -898,7 +931,7 @@ BOOL EngineBase::Init(HINSTANCE _hInstance, int _Width, int _Height)
     {
         return FALSE;
     }
-
+    
     CreateAllShader();
     LoadAllTexture();
     CreateSampler();
@@ -912,6 +945,16 @@ BOOL EngineBase::Init(HINSTANCE _hInstance, int _Width, int _Height)
     Renderer::CreateRenderer<ZeldaRenderer>();
     Renderer::CreateRenderer<BoxRenderer>();
     Renderer::CreateRenderer<SphereRenderer>();
+
+    BackBufferRenderer = std::make_shared<ScreenRenderer>();
+    BackBufferRenderer->Init();
+
+    BackBufferRenderer->SetVSShader(L"MeshVertexShader.hlsl");
+    BackBufferRenderer->SetPSShader(L"MeshPixelShader.hlsl");
+    BackBufferRenderer->SetSampler("LINEARWRAP");
+
+    std::shared_ptr<RenderBase> Unit = *BackBufferRenderer->GetUnits().begin();
+    Unit->SetTextureToSRV(DoubleBufferSRV);
 
     return TRUE;
 }
