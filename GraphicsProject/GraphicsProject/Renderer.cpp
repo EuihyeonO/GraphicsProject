@@ -13,16 +13,6 @@ void Renderer::Init()
 {
     isCallInit = true;
 
-    CreateConstantBuffer(EShaderType::PSShader, L"MeshLightPixelShader.hlsl", EngineBase::GetInstance().GetWorldLight());
-    CreateConstantBuffer(EShaderType::PSShader, L"MeshLightPixelShader.hlsl", MaterialData);
-    CreateConstantBuffer(EShaderType::PSShader, L"MeshLightPixelShader.hlsl", RimLightData);
-
-    CreateConstantBuffer(EShaderType::VSShader, L"CubeMapPixelShader.hlsl", EngineBase::GetInstance().GetWorldLight());
-
-    CreateConstantBuffer(EShaderType::VSShader, L"MeshLightVertexShader.hlsl", TransFormData);
-    CreateConstantBuffer(EShaderType::VSShader, L"MeshVertexShader.hlsl", TransFormData);
-    CreateConstantBuffer(EShaderType::VSShader, L"CubeMapVertexShader.hlsl", TransFormData);
-    CreateConstantBuffer(EShaderType::VSShader, L"EnvMapVertexShader.hlsl", TransFormData);
 }
 
 void Renderer::Update(float _DeltaTime)
@@ -360,4 +350,27 @@ void Renderer::SetModelToSquare(float _Width)
     NewUnit->CreateBuffer();
 
     RenderUnits.push_back(NewUnit);
+}
+
+void Renderer::TransformUpdate()
+{
+    TransFormData.WorldMatrix = DirectX::XMMatrixScaling(Scale.x, Scale.y, Scale.z) * DirectX::XMMatrixRotationX(Rotation.x) *
+        DirectX::XMMatrixRotationY(Rotation.y) * DirectX::XMMatrixRotationZ(Rotation.z) * DirectX::XMMatrixTranslation(Position.x, Position.y, Position.z);
+
+    TransFormData.WorldMatrix = TransFormData.WorldMatrix.Transpose();
+
+    TransFormData.ViewMAtrix = EngineBase::GetInstance().ViewMat;
+    TransFormData.ViewMAtrix = TransFormData.ViewMAtrix.Transpose();
+
+    const float AspectRatio = (float)EngineBase::GetInstance().GetWindowSize().first / (float)EngineBase::GetInstance().GetWindowSize().second;
+
+    const float fovAngleY = 70.0f * DirectX::XM_PI / 180.0f;
+    TransFormData.ProjMatrix =
+        DirectX::XMMatrixPerspectiveFovLH(fovAngleY, AspectRatio, 0.01f, 100.0f);
+
+    TransFormData.ProjMatrix = TransFormData.ProjMatrix.Transpose();
+
+    TransFormData.InvTranspose = TransFormData.WorldMatrix;
+    TransFormData.InvTranspose.Translation({ 0.0f, 0.0f, 0.0f });
+    TransFormData.InvTranspose = TransFormData.InvTranspose.Transpose().Invert();
 }

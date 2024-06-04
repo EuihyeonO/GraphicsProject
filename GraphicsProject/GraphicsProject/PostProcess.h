@@ -15,10 +15,6 @@ public:
 	PostProcess& operator=(PostProcess&& _Other) noexcept = delete;
 
 	void SetTexture(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> _SRV, int _Index = 0);
-	void SetDepthStencil(Microsoft::WRL::ComPtr<ID3D11DepthStencilView> _DSV)
-	{
-		DepthStencilView = _DSV;
-	}
 
 	void SetDoubleBuffer(RenderTarget _DoubleBuffer)
 	{
@@ -31,7 +27,6 @@ public:
 
 protected:
 	std::shared_ptr<class ScreenRenderer> PostProcessRenderer;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> DepthStencilView;
 
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> DoubleBufferRTV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> DoubleBufferSRV;

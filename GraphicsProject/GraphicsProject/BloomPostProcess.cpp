@@ -21,7 +21,6 @@ void BloomPostProcess::Init()
 
 	RenderTarget DoubleBuffer = EngineBase::GetInstance().GetDoubleBuffer();
 	SetDoubleBuffer(DoubleBuffer);
-	SetDepthStencil(EngineBase::GetInstance().GetDepthStencilView());
 
 	std::pair<int, int> WindowSize = EngineBase::GetInstance().GetWindowSize();
 
@@ -55,7 +54,7 @@ void BloomPostProcess::Render(float _DeltaTime)
 	SetTexture(DoubleBufferSRV);
 
 	EngineBase::GetInstance().GetContext()->ClearRenderTargetView(DetectTarget.RTV.Get(), ClearColor);
-	EngineBase::GetInstance().GetContext()->OMSetRenderTargets(1, DetectTarget.RTV.GetAddressOf(), DepthStencilView.Get());
+	EngineBase::GetInstance().GetContext()->OMSetRenderTargets(1, DetectTarget.RTV.GetAddressOf(), nullptr);
 	
 	PostProcessRenderer->SetPSShader(L"BrightDetectPixelShader.hlsl");
 	PostProcessRenderer->Render(_DeltaTime);
@@ -65,7 +64,7 @@ void BloomPostProcess::Render(float _DeltaTime)
 	EngineBase::GetInstance().GetContext()->RSSetViewports(1, &DownViewPort);
 
 	EngineBase::GetInstance().GetContext()->ClearRenderTargetView(BlurTarget.RTV.Get(), ClearColor);
-	EngineBase::GetInstance().GetContext()->OMSetRenderTargets(1, BlurTarget.RTV.GetAddressOf(), DepthStencilView.Get());
+	EngineBase::GetInstance().GetContext()->OMSetRenderTargets(1, BlurTarget.RTV.GetAddressOf(), nullptr);
 
 	PostProcessRenderer->SetPSShader(L"BlurPixelShader.hlsl");
 	PostProcessRenderer->Render(_DeltaTime);
@@ -75,7 +74,7 @@ void BloomPostProcess::Render(float _DeltaTime)
 	////º´ÇÕ
 	SetTexture(BlurTarget.SRV, 0);
 
-	EngineBase::GetInstance().GetContext()->OMSetRenderTargets(1, DoubleBufferRTV.GetAddressOf(), DepthStencilView.Get());
+	EngineBase::GetInstance().GetContext()->OMSetRenderTargets(1, DoubleBufferRTV.GetAddressOf(), nullptr);
 	EngineBase::GetInstance().GetContext()->OMSetBlendState(BlendState.Get(), NULL, 0xFFFFFFFF);
 
 	PostProcessRenderer->SetPSShader(L"BloomPixelShader.hlsl");

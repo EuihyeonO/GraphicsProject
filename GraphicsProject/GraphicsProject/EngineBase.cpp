@@ -301,6 +301,7 @@ void EngineBase::Update(float _DeltaTime)
     for (std::shared_ptr<Renderer> Renderer : Renderers)
     {
         Renderer->Update(_DeltaTime);
+        Renderer->TransformUpdate();
     }
 
     for (std::shared_ptr<Renderer> Renderer : Renderers)
@@ -317,7 +318,7 @@ void EngineBase::Render(float _DeltaTime)
     Context->ClearRenderTargetView(DoubleBufferRTV.Get(), clearColor);
     Context->ClearDepthStencilView(DepthStencilView.Get(),
         D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
+    
     Context->OMSetRenderTargets(1, DoubleBufferRTV.GetAddressOf(), DepthStencilView.Get());
     Context->OMSetDepthStencilState(DepthStencilState.Get(), 0);
     
@@ -381,13 +382,6 @@ BOOL EngineBase::ImguiInit()
         return FALSE;
     }
 
-    AddGUIFunction([this] {ImGui::Checkbox("WireFrame",&isWireFrame);});
-
-    AddGUIFunction([this] {ImGui::SliderFloat3("CameraPos", &CameraTranslation.x, -10.0f, 10.0f); });
-    AddGUIFunction([this] {ImGui::SliderFloat3("CameraRot", &CameraRotation.x, -3.14f, 3.14f); });
-    AddGUIFunction([this] {ImGui::SliderFloat3("PointLightPos", &WorldLight.Lights[1].Position.x, -10.0f, 10.0f); });
-    AddGUIFunction([this] {ImGui::SliderFloat("SpotPower", &WorldLight.Lights[2].SpotPower, 0.0f, 100.0f); });
-
     return TRUE;
 }
 
@@ -397,14 +391,18 @@ void EngineBase::ImguiUpdate()
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 
-    ImGui::Begin("Hello, world!"); 
+    ImGui::Begin("IMGUI"); 
     
+    ImGui::Text("Engine GUI");
+    ImGui::SliderFloat3("CameraPos", &CameraTranslation.x, -10.0f, 10.0f);
+    ImGui::SliderFloat3("CameraRot", &CameraRotation.x, -3.14f, 3.14f);
+    ImGui::Separator();
 
+    ImGui::Text("Content GUI");
     for (const std::function<void()> _Func : GUIFunctions)
     {
         _Func();
     }
-
 
     ImGui::End();
 }

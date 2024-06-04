@@ -115,6 +115,40 @@ public:
 
 	std::string Name = "";
 
+	//Transform
+public:
+	void SetScale(DirectX::SimpleMath::Vector3 _Scale)
+	{
+		Scale = _Scale;
+	}
+
+	void SetRotation(DirectX::SimpleMath::Vector3 _Rotation)
+	{
+		Rotation = _Rotation;
+	}
+
+	void SetPosition(DirectX::SimpleMath::Vector3 _Position)
+	{
+		Position = _Position;
+	}
+
+	DirectX::SimpleMath::Vector3 GetScale()
+	{
+		return Scale;
+	}
+
+	DirectX::SimpleMath::Vector3 GetRotation()
+	{
+		return Rotation;
+	}
+
+	DirectX::SimpleMath::Vector3 GetPositon()
+	{
+		return Position;
+	}
+
+	void TransformUpdate();
+
 protected:
 	ERimLight RimLightData;
 	EMaterial MaterialData;
@@ -125,6 +159,10 @@ private:
 
 	std::unordered_map<std::wstring, std::list<EConstantBufferData>> VSConstantBuffers;
 	std::unordered_map<std::wstring, std::list<EConstantBufferData>> PSConstantBuffers;
+
+	DirectX::SimpleMath::Vector3 Scale = { 1.0f, 1.0f, 1.0f };
+	DirectX::SimpleMath::Vector3 Position;
+	DirectX::SimpleMath::Vector3 Rotation;
 
 	bool isCallInit = false;
 };
